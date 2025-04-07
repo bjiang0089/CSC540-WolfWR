@@ -13,13 +13,13 @@ public class Have extends DomainObject {
     private HaveID id;
 
     @ManyToOne
-    @MapsId("id")
-    @JoinColumn(name = "id")
-    private Member m;
+    @MapsId("memberID")
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @ManyToOne
-    @MapsId("name")
-    @JoinColumn(name = "name")
+    @MapsId("mlID")
+    @JoinColumn(name = "ml_name")
     private MembershipLevel ml;
 
     private String joinDate;
@@ -31,29 +31,36 @@ public class Have extends DomainObject {
 
         private Long memberID;
 
-        private String levelID;
+        private String mlID;
 
         public Long getMemberID() {
             return memberID;
+        }
+
+        public HaveID() {}
+
+        public HaveID(Long memberID, String mlId) {
+            this.memberID = memberID;
+            this.mlID = mlId;
         }
 
         public void setMemberID(Long memberID) {
             this.memberID = memberID;
         }
 
-        public String getLevelID() {
-            return levelID;
+        public String getMlID() {
+            return mlID;
         }
 
-        public void setLevelID(String levelID) {
-            this.levelID = levelID;
+        public void setMlID(String levelID) {
+            this.mlID = levelID;
         }
 
         @Override
         public boolean equals(Object o) {
             if (o instanceof HaveID) {
                 return (Objects.equals(this.memberID, ((HaveID) o).getMemberID()))
-                        && (this.levelID.equals(((HaveID) o).getLevelID()));
+                        && (this.mlID.equals(((HaveID) o).getMlID()));
             } else {
                 return false;
             }
@@ -61,7 +68,7 @@ public class Have extends DomainObject {
 
         @Override
         public int hashCode() {
-            return Objects.hash( this.memberID, this.levelID );
+            return Objects.hash( this.memberID, this.mlID);
         }
     }
 }

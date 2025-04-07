@@ -31,7 +31,7 @@ public class WolfWRApp  implements CommandLineRunner{
         Scanner scan = new Scanner(System.in);
         while(true) {
             System.out.println("\n\nEnter membership details as a comma separated list\n" +
-                    "(Id, First Name, Last Name, Membership Level, email, home address, phone number, active status) or q to quit: ");
+                    "(Id, First Name, Last Name, Membership Level, email, home address, phone number, active status, startDate) or q to quit: ");
             String line = scan.nextLine();
             if (line.trim().equals("q")){
                 System.out.println("Goodbye");
@@ -48,6 +48,7 @@ public class WolfWRApp  implements CommandLineRunner{
             String addr = attr[5];
             String phone = attr[6];
             boolean active = Boolean.parseBoolean( attr[7] );
+            String start = attr[7];
 
             Optional<MembershipLevel> result = mlRepo.findById(mlID);
             MembershipLevel ml = null;
@@ -71,7 +72,6 @@ public class WolfWRApp  implements CommandLineRunner{
                 System.out.println("Failed to Find Member\n");
                 continue;
             }
-
         }
         scan.close();
     }
