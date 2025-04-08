@@ -22,43 +22,44 @@ public class WolfWRApp  implements CommandLineRunner{
     @Override
     public void run(String... args) throws Exception {
         Scanner scan = new Scanner(System.in);
-        System.out.println("\n\nMain Method Running. . .\n\n");
-//        while(true) {
-//            System.out.println("\n\nEnter membership details as a comma separated list\n" +
-//                    "(Id, First Name, Last Name, Membership Level, email, home address, phone number, active status) or q to quit: ");
-//            String line = scan.nextLine();
-//            if (line.trim().equals("q")){
-//                System.out.println("Goodbye");
-//                break;
-//            }
-//
-//            String[] attr = line.split("\\s*,\\s*");
-//
-//            long id = Long.parseLong(attr[0]);
-//            String first = attr[1] ;
-//            String last = attr[2];
-//            String mlID = attr[3];
-//            String email = attr[4];
-//            String addr = attr[5];
-//            String phone = attr[6];
-//            boolean active = Boolean.parseBoolean( attr[7] );
-//
-//
-//
-//            Member m = new Member(id, first, last, ml, email, addr, phone, active);
-//            mRepo.save(m);
-//            m = null;
-//
-//            Optional<Member> retrieve = mRepo.findById(id);
-//            if (retrieve.isPresent()) {
-//                m = retrieve.get();
-//                System.out.println( ml.toString() );
-//            } else {
-//                System.out.println("Failed to Find Member\n");
-//                continue;
-//            }
-//
-//        }
+        System.out.println("\n\nWelcome to Wolf Wholesale\n\n");
+
+
+
+        while(true) {
+            System.out.println("Please select your role (input the number associated with your role): ");
+            System.out.println("[1] Manager");
+            System.out.println("[2] Billing Staff");
+            System.out.println("[3] Registration Staff");
+            System.out.println("[4] Warehouse Staff");
+            System.out.println("[5] Customer");
+            System.out.print("> ");
+
+            String line = scan.nextLine().trim();
+            if (line.trim().equals("q")){
+                System.out.println("Goodbye");
+                break;
+            }
+
+            switch(line) {
+                case "0":
+                    System.out.println("Loading Data to the database. . .\n");
+                    break;
+                case "1":
+                    System.out.println("Manager View. . .\n");                    break;
+                case "2":
+                    System.out.println("Billing Staff View. . .\n");                    break;
+                case "3":
+                    System.out.println("Registration Staff View. . .\n");                    break;
+                case "4":
+                    System.out.println("Warehouse Staff View. . .\n");                    break;
+                case "5":
+                    System.out.println("Customer View. . .\n");
+                    break;
+                default:
+                    System.out.println("Unknown role selected\n");
+            }
+        }
         scan.close();
     }
 }
