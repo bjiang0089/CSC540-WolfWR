@@ -1,13 +1,9 @@
-package CSC540.WolfWR.models.joins;
+package CSC540.WolfWR.models;
 
-import CSC540.WolfWR.models.DomainObject;
-import CSC540.WolfWR.models.Member;
-import CSC540.WolfWR.models.Store;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity
 public class SignUp extends DomainObject {
