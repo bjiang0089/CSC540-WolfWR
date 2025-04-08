@@ -1,13 +1,10 @@
 package CSC540.WolfWR.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name="members")
-public class Member extends DomainObject {
+public class Member {
 
     @Id
     private long id;
@@ -15,7 +12,7 @@ public class Member extends DomainObject {
     private String firstName;
     private String lastName;
 
-    @ManyToOne
+    @Enumerated(EnumType.STRING)
     private MembershipLevel membershipLevel;
 
     private String email;
@@ -61,8 +58,8 @@ public class Member extends DomainObject {
         this.lastName = lastName;
     }
 
-    public MembershipLevel getMembershipLevel() {
-        return membershipLevel;
+    public String getMembershipLevel() {
+        return membershipLevel.getName();
     }
 
     public void setMembershipLevel(MembershipLevel membershipLevel) {
