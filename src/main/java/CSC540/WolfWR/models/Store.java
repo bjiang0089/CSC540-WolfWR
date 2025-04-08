@@ -8,7 +8,8 @@ public class Store extends DomainObject {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long storeID;
 
-    @OneToOne( mappedBy = "Store", cascade = CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "managerID")
     private Staff manager;
 
 
