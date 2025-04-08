@@ -13,13 +13,11 @@ import java.util.Objects;
 public class SignUp extends DomainObject {
 
     @ManyToOne
-    @MapsId("storeID")
     @NotNull
     @JoinColumn(name = "storeID")
     private Store store;
 
     @ManyToOne
-    @MapsId("memberID")
     @NotNull
     @JoinColumn(name = "memberID")
     @Id

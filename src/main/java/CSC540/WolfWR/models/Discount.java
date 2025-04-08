@@ -9,14 +9,14 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
+@IdClass(Discount.DiscountID.class)
 public class Discount extends DomainObject {
-    @EmbeddedId
-    private DiscountID discountID;
 
     @ManyToOne
     @JoinColumn(name = "productID")
-    @MapsId("merchID")
-    private Merchandise merch;
+    @MapsId("productID")
+    @Id
+    private Merchandise productID;
 
     @Min(0)
     @Max(100)
@@ -24,6 +24,7 @@ public class Discount extends DomainObject {
     private int discountPercentage;
 
     @MapsId("start")
+    @Id
     private LocalDate start;
 
     @NotNull
@@ -32,19 +33,19 @@ public class Discount extends DomainObject {
     public Discount() {}
 
     public Discount( Merchandise merch, LocalDate start, int discountPercentage, LocalDate end) {
-        this.discountID = new DiscountID(merch.getProductID(), start);
-        this.merch = merch;
+        this.productID = merch;
         this.start = start;
         this.discountPercentage = discountPercentage;
         this.end = end;
     }
 
-    public Merchandise getMerch() {
-        return merch;
+
+    public Merchandise getProductID() {
+        return productID;
     }
 
-    public void setMerch(Merchandise merch) {
-        this.merch = merch;
+    public void setProductID(Merchandise merch) {
+        this.productID = merch;
     }
 
     public int getDiscountPercentage() {
@@ -74,23 +75,23 @@ public class Discount extends DomainObject {
     @Embeddable
     public static class DiscountID extends DomainObject {
 
-        private long merchID;
+        private long productID;
 
         private LocalDate start;
 
         public DiscountID() {}
 
-        public DiscountID(long merchID, LocalDate start) {
-            this.merchID = merchID;
+        public DiscountID(long productId, LocalDate start) {
+            this.productID = productId;
             this.start = start;
         }
 
-        public long getMerchID() {
-            return merchID;
+        public long getProductID() {
+            return productID;
         }
 
-        public void setMerchID(long merchID) {
-            this.merchID = merchID;
+        public void setProductID(long merchID) {
+            this.productID = merchID;
         }
 
         public LocalDate getStart() {
@@ -105,12 +106,12 @@ public class Discount extends DomainObject {
         public boolean equals(Object o) {
             if (o == null || getClass() != o.getClass()) return false;
             DiscountID that = (DiscountID) o;
-            return merchID == that.merchID && Objects.equals(start, that.start);
+            return productID == that.productID && Objects.equals(start, that.start);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(merchID, start);
+            return Objects.hash(productID, start);
         }
     }
 }
