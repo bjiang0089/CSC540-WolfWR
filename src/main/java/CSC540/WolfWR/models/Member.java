@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name="members")
-public class Member {
+public class Member extends DomainObject{
 
     @Id
     private long id;
