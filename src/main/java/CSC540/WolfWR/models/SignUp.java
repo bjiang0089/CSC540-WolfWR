@@ -8,15 +8,18 @@ import java.time.LocalDate;
 @Entity
 public class SignUp extends DomainObject {
 
+    @Id
+    private long memberID;
+
     @ManyToOne
     @NotNull
     @JoinColumn(name = "storeID")
     private Store store;
 
-    @ManyToOne
+    @MapsId
+    @OneToOne
     @NotNull
     @JoinColumn(name = "memberID")
-    @Id
     private Member member;
 
     @NotNull
@@ -25,9 +28,18 @@ public class SignUp extends DomainObject {
     public SignUp() {}
 
     public SignUp(Store store, Member member, LocalDate signUpDate) {
+        this.memberID = member.getId();
         this.store = store;
         this.member = member;
         this.signUpDate = signUpDate;
+    }
+
+    public long getMemberID() {
+        return memberID;
+    }
+
+    public void setMemberID(long memberID) {
+        this.memberID = memberID;
     }
 
     public LocalDate getSignUpDate() {
