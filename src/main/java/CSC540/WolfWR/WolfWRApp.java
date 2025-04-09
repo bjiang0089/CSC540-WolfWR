@@ -1,26 +1,46 @@
 package CSC540.WolfWR;
 
 import CSC540.WolfWR.models.Member;
-import CSC540.WolfWR.models.MembershipLevel;
-import CSC540.WolfWR.repositories.MemberRepository;
-import CSC540.WolfWR.repositories.MembershipLevelRepository;
+import CSC540.WolfWR.services.MemberService;
+import CSC540.WolfWR.views.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Scanner;
 
 @SpringBootApplication
 public class WolfWRApp  implements CommandLineRunner{
 
-    @Autowired
-    private MembershipLevelRepository mlRepo;
 
     @Autowired
-    private MemberRepository mRepo;
+    private DataLoader loader;
+
+    @Autowired
+    private BillingStaffView billing;
+
+    @Autowired
+    private RegistrationView registration;
+
+    @Autowired
+    private WarehouseView warehouse;
+
+    @Autowired
+    private ManagerView manager;
+
+    @Autowired
+    private CustomerView customer;
+
+    @Autowired
+    private GlobalView global;
+
+    @Autowired
+    private MemberService memberServ;
+
+    public static DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("MM-dd-yyyy");
 
     public static void main(String[] args) {
         SpringApplication.run(WolfWRApp.class, args);
@@ -29,50 +49,70 @@ public class WolfWRApp  implements CommandLineRunner{
     @Override
     public void run(String... args) throws Exception {
         Scanner scan = new Scanner(System.in);
+        System.out.println("\n\nWelcome to Wolf Wholesale\n\n");
+
+
+
         while(true) {
-            System.out.println("\n\nEnter membership details as a comma separated list\n" +
-                    "(Id, First Name, Last Name, Membership Level, email, home address, phone number, active status) or q to quit: ");
-            String line = scan.nextLine();
+            System.out.println("\nPlease select your role (input the number associated with your role) or q to quit: ");
+            System.out.println("[0] Load Data");
+            System.out.println("[1] Manager");
+            System.out.println("[2] Billing Staff");
+            System.out.println("[3] Registration Staff");
+            System.out.println("[4] Warehouse Staff");
+            System.out.println("[5] Customer");
+            System.out.println("[6] Global / Corporate");
+            System.out.print("> ");
+
+            String line = scan.nextLine().trim();
             if (line.trim().equals("q")){
                 System.out.println("Goodbye");
                 break;
             }
 
-            String[] attr = line.split("\\s*,\\s*");
+            switch(line) {
+                case "0":
+                    System.out.println("Loading Data to the database. . .\n");
+                    loader.loadData();
+                    System.out.println("Data Loaded!!!\n");
+                    break;
+                case "1":
+                    System.out.println("Manager View. . .\n");
+                    manager.view(scan);
+                    break;
+                case "2":
+                    System.out.println("Billing Staff View. . .\n");
+                    billing.view(scan);
+                    break;
+                case "3":
+                    System.out.println("Registration Staff View. . .\n");
+                    registration.view(scan);
+                    break;
+                case "4":
+                    System.out.println("Warehouse Staff View. . .\n");
+                    warehouse.view(scan);
+                    break;
+                case "5":
+                    System.out.println("Customer View. . .\n");
+                    customer.view(scan);
+                    break;
 
-            long id = Long.parseLong(attr[0]);
-            String first = attr[1] ;
-            String last = attr[2];
-            String mlID = attr[3];
-            String email = attr[4];
-            String addr = attr[5];
-            String phone = attr[6];
-            boolean active = Boolean.parseBoolean( attr[7] );
+                case "6":
+                    System.out.println("Global View. . .");
+                    global.view(scan);
+                    break;
 
-            Optional<MembershipLevel> result = mlRepo.findById(mlID);
-            MembershipLevel ml = null;
-            if (result.isPresent()) {
-                ml = result.get();
-                System.out.println( ml.toString() );
-            } else {
-                System.out.println("Failed to Find Membership Level\n");
-                continue;
+                default:
+                    System.out.println("Unknown role selected\n");
             }
-
-            Member m = new Member(id, first, last, ml, email, addr, phone, active);
-            mRepo.save(m);
-            m = null;
-
-            Optional<Member> retrieve = mRepo.findById(id);
-            if (retrieve.isPresent()) {
-                m = retrieve.get();
-                System.out.println( ml.toString() );
-            } else {
-                System.out.println("Failed to Find Member\n");
-                continue;
-            }
-
         }
         scan.close();
+    }
+
+    private void customerSelection() {
+        List<Member> members = memberServ.findAll();
+        for (int i = 0; i < members.size(); i++) {
+            System.out.printf("[%d] ");
+        }
     }
 }
