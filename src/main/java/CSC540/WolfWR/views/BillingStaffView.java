@@ -47,10 +47,11 @@ public class BillingStaffView {
 
             input = scan.nextLine().trim();
 
-            switch (input.trim().toLowerCase()) {
-                case "0":
-                System.out.println("Returning to Home Page. . .\n");
+            if (input.equalsIgnoreCase("0")) {
                 return;
+            }
+
+            switch (input.trim().toLowerCase()) {
                 case "1":
                     // Make call to helper method
                     generateBill(scan);

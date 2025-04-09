@@ -5,14 +5,12 @@ import java.util.Objects;
 public class TransactionItemID extends DomainObject {
     private long transactionID;
     private long productID;
-    private long storeID;
 
     public TransactionItemID () {}
 
-    public TransactionItemID(long transactionID, long productID, long storeID) {
+    public TransactionItemID(long transactionID, long productID) {
         this.transactionID = transactionID;
         this.productID = productID;
-        this.storeID = storeID;
     }
 
     public long getTransactionID() {
@@ -31,27 +29,15 @@ public class TransactionItemID extends DomainObject {
         this.productID = productID;
     }
 
-    public long getStoreID() {
-        return storeID;
-    }
-
-    public void setStoreID(long storeID) {
-        this.storeID = storeID;
-    }
-
-
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         TransactionItemID that = (TransactionItemID) o;
-        return this.transactionID == that.getTransactionID() &&
-                this.productID == that.getProductID() &&
-                this.storeID == that.getStoreID();
+        return this.transactionID == that.getTransactionID() && this.productID == that.getProductID();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.transactionID, this.productID, this.storeID);
+        return Objects.hash(this.transactionID, this.productID);
     }
 }
