@@ -70,7 +70,7 @@ public class CustomerView {
 
     @Transactional
     public void makePurchase(Scanner scan, Member active) {
-        // TODO: Store Selection
+        // Store Selection
         Store current = null;
         List<Store> locations = storeServ.findAll();
         System.out.println("\nPlease select a store:");
@@ -84,25 +84,19 @@ public class CustomerView {
             return;
         }
 
-        Transaction t = new Transaction();
-        t.setTransactionID( transServ.generateID() );
-        t.setStore(current);
-        t.setPurchaseDate(LocalDate.now());
-        t.setProductList( new ArrayList<TransactionItem>() );
-        t.setMember(active);
-        List<Staff> cashiers = transServ.findCashier(current);
-        if (cashiers.isEmpty()) {
+        Transaction t = getNewTransaction(current, active);
+        if (t == null) {
             System.out.println("There are no cashiers at this store\n");
             return;
         }
-        Staff cash = cashiers.get( 1009 % cashiers.size() );
 
-        // TODO: Get list of transaction items
+        // Get list of transaction items
         List<Merchandise> product = merchServ.storeInventory(current);
         while(true) {
             System.out.println("Please make a selection:");
             listInventory(product);
-            // TODO: Item Selection
+
+            // Item Selection
             try {
                 String input = scan.nextLine().trim();
 
@@ -129,7 +123,7 @@ public class CustomerView {
                 continue;
             }
         }
-        // TODO: Checkout
+        // Checkout
         double total = calculateTotal(t.getProductList());
         System.out.printf("The total for you transaction is $%3.2f.\n", total);
         t.setTotalPrice(total);
@@ -170,5 +164,22 @@ public class CustomerView {
             System.out.printf("[%d] %10s %10s. %s Member\n", i + 1, m.getFirstName(), m.getLastName(), m.getMembershipLevel());
         }
         System.out.print("> ");
+    }
+
+    public Transaction getNewTransaction(Store s, Member m) {
+        Transaction t = new Transaction();
+        t.setTransactionID( transServ.generateID() );
+        t.setStore(s);
+        t.setPurchaseDate(LocalDate.now());
+        t.setProductList( new ArrayList<TransactionItem>() );
+        t.setMember(m);
+        List<Staff> cashiers = transServ.findCashier(s);
+        if (cashiers.isEmpty()) {
+            System.out.println("There are no cashiers at this store\n");
+            return null;
+        }
+        Staff cash = cashiers.get( 1009 % cashiers.size() );
+
+        return t;
     }
 }

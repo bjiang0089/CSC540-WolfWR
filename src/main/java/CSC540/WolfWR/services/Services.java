@@ -26,4 +26,8 @@ public abstract class Services<T extends DomainObject, K> {
     public List<T> findAll() {
         return getRepo().findAll();
     }
+
+    public void delete(T obj){getRepo().delete(obj);}
+
+    public void deleteList(List<T> objs){ getRepo().deleteAll(objs); }
 }
