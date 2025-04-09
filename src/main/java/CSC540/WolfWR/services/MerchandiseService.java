@@ -1,6 +1,7 @@
 package CSC540.WolfWR.services;
 
 import CSC540.WolfWR.models.Merchandise;
+import CSC540.WolfWR.models.Store;
 import CSC540.WolfWR.models.Supplier;
 import CSC540.WolfWR.repositories.MerchandiseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,5 +26,9 @@ public class MerchandiseService extends Services<Merchandise, Long> {
 
     public List<Merchandise> deliveriesByTimeAndSupplier(LocalDate start, LocalDate end, Supplier s) {
         return repo.deliveriesByTime(start, end, s.getSupplierID());
+    }
+
+    public List<Merchandise> storeInventory(Store s) {
+        return this.repo.storeInventory(s.getStoreID());
     }
 }

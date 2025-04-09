@@ -16,14 +16,21 @@ public class TransactionItem extends DomainObject{
     @Column(name = "productID")
     private long productID;
 
+    @Id
+    @Column(name = "storeID")
+    private long storeID;
+
     @ManyToOne
     @MapsId
     @JoinColumn(name = "transactionID")
     private Transaction transaction;
 
     @OneToOne
+    @JoinColumns({
+            @JoinColumn(name = "productID", referencedColumnName = "productID"),
+            @JoinColumn(name = "storeID", referencedColumnName = "storeID")
+    })
     @MapsId
-    @JoinColumn(name = "productID")
     private Merchandise merch;
 
     public TransactionItem() {}
@@ -34,6 +41,14 @@ public class TransactionItem extends DomainObject{
 
         this.productID = merch.getProductID();
         this.transactionID = transaction.getTransactionID();
+    }
+
+    public long getStoreID() {
+        return storeID;
+    }
+
+    public void setStoreID(long storeID) {
+        this.storeID = storeID;
     }
 
     public long getTransactionID() {

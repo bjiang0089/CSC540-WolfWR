@@ -6,12 +6,23 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
+@IdClass(MerchandiseID.class)
 public class Merchandise extends DomainObject {
 
     @Id
     private long productID;
+
+    @Id
+    private long storeID;
+
+    @ManyToOne
+    @NotNull
+    @MapsId
+    @JoinColumn(name = "storeID")
+    private Store store;
 
     @Column(nullable = false)
     private String productName;
@@ -40,11 +51,6 @@ public class Merchandise extends DomainObject {
     @NotNull
     @JoinColumn(name = "supplierID")
     private Supplier supplier;
-
-    @ManyToOne
-    @JoinColumn(name = "storeID")
-    @NotNull
-    private Store store;
 
     public Merchandise() {}
 
@@ -131,5 +137,33 @@ public class Merchandise extends DomainObject {
 
     public void setStore(Store store) {
         this.store = store;
+    }
+
+    public long getStoreID() {
+        return storeID;
+    }
+
+    public void setStoreID(long storeID) {
+        this.storeID = storeID;
+    }
+
+    public void setBuyPrice(double buyPrice) {
+        this.buyPrice = buyPrice;
+    }
+
+    public void setMarketPrice(double marketPrice) {
+        this.marketPrice = marketPrice;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Merchandise that = (Merchandise) o;
+        return productID == that.getProductID() && storeID == that.getStoreID();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(productID, storeID);
     }
 }

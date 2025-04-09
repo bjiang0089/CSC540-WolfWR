@@ -13,11 +13,20 @@ import java.util.Objects;
 @IdClass(Discount.DiscountID.class)
 public class Discount extends DomainObject {
 
-    @ManyToOne
-    @JoinColumn(name = "productID")
-    @MapsId("productID")
     @Id
-    private Merchandise productID;
+    @Column(name = "productID")
+    private long productID;
+
+    @Id
+    private long storeID;
+
+    @ManyToOne
+    @JoinColumns({
+        @JoinColumn(name = "productID", referencedColumnName = "productID"),
+        @JoinColumn(name = "storeID", referencedColumnName = "storeID")
+    })
+    @MapsId
+    private Merchandise product;
 
     @Min(0)
     @Max(100)
@@ -34,27 +43,34 @@ public class Discount extends DomainObject {
     public Discount() {}
 
     public Discount( Merchandise merch, int discountPercentage, String start, String end) {
-        this.productID = merch;
+        this.product = merch;
         this.start = LocalDate.parse(start, WolfWRApp.timeFormat);
         this.discountPercentage = discountPercentage;
         this.end = LocalDate.parse(end, WolfWRApp.timeFormat);
     }
 
+    public long getStoreID() {
+        return storeID;
+    }
 
-    public Merchandise getProductID() {
+    public void setStoreID(long storeID) {
+        this.storeID = storeID;
+    }
+
+    public long getProductID() {
         return productID;
     }
 
-    public void setProductID(Merchandise merch) {
-        this.productID = merch;
+    public void setProductID(long productID) {
+        this.productID = productID;
     }
 
-    public int getDiscountPercentage() {
-        return discountPercentage;
+    public Merchandise getProduct() {
+        return product;
     }
 
-    public void setDiscountPercentage(int discountPercentage) {
-        this.discountPercentage = discountPercentage;
+    public void setProduct(Merchandise product) {
+        this.product = product;
     }
 
     public LocalDate getStart() {
@@ -63,6 +79,14 @@ public class Discount extends DomainObject {
 
     public void setStart(LocalDate start) {
         this.start = start;
+    }
+
+    public int getDiscountPercentage() {
+        return discountPercentage;
+    }
+
+    public void setDiscountPercentage(int discountPercentage) {
+        this.discountPercentage = discountPercentage;
     }
 
     public LocalDate getEnd() {
@@ -80,11 +104,14 @@ public class Discount extends DomainObject {
 
         private LocalDate start;
 
+        private long storeID;
+
         public DiscountID() {}
 
-        public DiscountID(long productId, LocalDate start) {
+        public DiscountID(long productId, LocalDate start, long storeID) {
             this.productID = productId;
             this.start = start;
+            this.storeID = storeID;
         }
 
         public long getProductID() {
@@ -103,16 +130,26 @@ public class Discount extends DomainObject {
             this.start = start;
         }
 
+        public long getStoreID() {
+            return storeID;
+        }
+
+        public void setStoreID(long storeID) {
+            this.storeID = storeID;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (o == null || getClass() != o.getClass()) return false;
             DiscountID that = (DiscountID) o;
-            return productID == that.productID && Objects.equals(start, that.start);
+            return productID == that.productID &&
+                    Objects.equals(start, that.start) &&
+                    this.storeID == that.getStoreID();
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(productID, start);
+            return Objects.hash(productID, start, storeID);
         }
     }
 }

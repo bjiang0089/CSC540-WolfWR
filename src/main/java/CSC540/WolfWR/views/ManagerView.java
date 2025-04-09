@@ -7,7 +7,7 @@ import java.util.Scanner;
 @Component
 public class ManagerView {
 
-    public static void view(Scanner scan) {
+    public void view(Scanner scan) {
         String input = null;
         BillingStaffView billling = new BillingStaffView();
         WarehouseView warehouse = new WarehouseView();
