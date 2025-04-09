@@ -72,7 +72,8 @@ public class TransactionItem extends DomainObject{
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         TransactionItem that = (TransactionItem) o;
-        return transactionID == that.transactionID && productID == that.productID && Objects.equals(transaction, that.transaction) && Objects.equals(merch, that.merch);
+        return transactionID == that.getTransactionID() && productID == that.getProductID() &&
+                Objects.equals(transaction, that.transaction) && Objects.equals(merch, that.merch);
     }
 
     @Override
