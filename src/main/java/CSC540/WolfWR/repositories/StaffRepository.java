@@ -12,5 +12,5 @@ import java.util.List;
 public interface StaffRepository extends JpaRepository<Staff, Long> {
 
     @Query(value = "SELECT * FROM staff WHERE storeID = :storeID AND title = :cashier", nativeQuery = true)
-    public List<Staff> findCashier(@Param("storeID") Long storeID, @Param("cashier") String title);
+    public List<Staff> findCashier(@Param("storeID") Long storeID, @Param("cashier") int title);
 }

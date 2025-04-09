@@ -10,10 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 @Transactional
 @Component
@@ -141,8 +139,12 @@ public class TransactionService  extends  Services<Transaction, Long> {
         System.out.printf("In a 1 %s timespan starting from %s, %4d transactions have been completed company-wide for a total of $%4.2f in sales.\n\n",
                 timeframe, start.toString(), count, total);
     }
+
     public List<Staff> findCashier(Store s) {
-        return staffRepo.findCashier(s.getStoreID(), Staff.Title.BILLING.name());
+        return staffRepo.findCashier(s.getStoreID(), Staff.Title.BILLING.ordinal());
+    }
+    public List<Transaction> getHistoryByCustomer(Member m) {
+        return repo.getHistoryByCustomer(m.getId());
     }
 
     public long generateID() {

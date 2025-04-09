@@ -5,7 +5,6 @@ import CSC540.WolfWR.services.MemberService;
 import CSC540.WolfWR.services.MerchandiseService;
 import CSC540.WolfWR.services.StoreService;
 import CSC540.WolfWR.services.TransactionService;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +49,7 @@ public class CustomerView {
             System.out.println("\nSelect an action with the number provided:");
             System.out.println("[0] Return to Home Page");
             System.out.println("[1] Make a Purchase");
+            System.out.println("[2] View History");
             System.out.print("> ");
 
             input = scan.nextLine().trim();
@@ -59,13 +59,31 @@ public class CustomerView {
                     System.out.println("Returning to Home Page. . .\n");
                     return;
                 case "1":
-                    System.out.println("Making Purchase");
                     makePurchase(scan, activeMember);
+                    break;
+                case "2":
+                    viewHistory(activeMember);
                     break;
                 default:
                     System.out.println("\nUnknown action\n");
             }
         }
+    }
+
+    public void viewHistory(Member m) {
+        List<Transaction> trans = transServ.getHistoryByCustomer(m);
+        int count = 0;
+        double total = 0;
+        System.out.println();
+        for (int i = 0 ; i < trans.size(); i++) {
+            Transaction t = trans.get(i);
+            System.out.printf("Transaction %4d - Total: $%3.2f - Date: %s\n",
+                    t.getTransactionID(), t.getTotalPrice(), t.getPurchaseDate().toString());
+            count++;
+            total += t.getTotalPrice();
+        }
+        System.out.printf("You've made %3d purchases with a total of $%4.2f\n\n",
+                count, total);
     }
 
     @Transactional
@@ -166,6 +184,7 @@ public class CustomerView {
         System.out.print("> ");
     }
 
+    @Transactional
     public Transaction getNewTransaction(Store s, Member m) {
         Transaction t = new Transaction();
         t.setTransactionID( transServ.generateID() );
@@ -178,7 +197,7 @@ public class CustomerView {
             System.out.println("There are no cashiers at this store\n");
             return null;
         }
-        Staff cash = cashiers.get( 1009 % cashiers.size() );
+        Staff cash = cashiers.get( 0 );
 
         return t;
     }
