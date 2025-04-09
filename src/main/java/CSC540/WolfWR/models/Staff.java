@@ -34,7 +34,26 @@ public class Staff extends DomainObject{
     private int employmentTime;
     
     private enum Title {
-        MANAGER, REGISTRATION, BILLING, WAREHOUSE
+        MANAGER, 
+        REGISTRATION, 
+        BILLING, 
+        WAREHOUSE, 
+        UNKNOWN;
+
+        private static Title fromString(String title) {
+            switch (title.toLowerCase()) {
+                case "manager":
+                case "assistant manager":
+                    return MANAGER;
+                case "billing staff":
+                case "cashier":
+                    return BILLING;
+                case "warehouse checker":
+                    return WAREHOUSE;
+                default:
+                    return UNKNOWN;
+            }
+        }
     }
 
     @Column(name = "title", nullable = false)
@@ -56,7 +75,7 @@ public class Staff extends DomainObject{
         this.name = name;
         this.age = age;
         this.address = address;
-        this.title = getTitleFromString(title);
+        this.title = Title.fromString(title);
         this.email = email;
         this.phone = phone;
         this.employmentTime = employmentTime;
@@ -107,7 +126,7 @@ public class Staff extends DomainObject{
     }
 
     public void setTitle(String title) {
-        this.title = getTitleFromString(title);
+        this.title = Title.fromString(title);
     }
 
     public String getPhone() {
@@ -132,14 +151,5 @@ public class Staff extends DomainObject{
 
     public void setEmploymentTime(int employmentTime) {
         this.employmentTime = employmentTime;
-    }
-
-    public Title getTitleFromString(String title) {
-        for (Title t : Title.class.getEnumConstants()) {
-            if (t.name().equalsIgnoreCase(title)) {
-                return t;
-            }
-        }
-        return null;
     }
 }
