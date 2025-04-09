@@ -15,4 +15,8 @@ public interface MerchandiseRepository extends JpaRepository<Merchandise, Long> 
 
     @Query(value = "SELECT * FROM Merchandise WHERE supplierID = :supplierID AND production_date BETWEEN :start AND :end", nativeQuery = true)
     public List<Merchandise> deliveriesByTime(@Param("start") LocalDate start, @Param("end") LocalDate end, @Param("supplierID")Long supplierID);
+
+
+    @Query(value = "SELECT * FROM merchandise WHERE storeID = :store", nativeQuery = true)
+    public List<Merchandise> storeInventory(@Param("store") Long storeID);
 }
