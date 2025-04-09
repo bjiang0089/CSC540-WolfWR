@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -49,6 +48,97 @@ public class TransactionService  extends  Services<Transaction, Long> {
         repo.save(t);
     }
 
+    public void generateBoundStoreSalesReport(LocalDate start, LocalDate end, Store store) {
+        List<Transaction> trans = repo.generateBoundStoreSalesReport(start, end, store.getStoreID());
+        double total = 0;
+        int count = 0;
+        System.out.println();
+        for (Transaction t: trans) {
+            System.out.printf("Trans ID: %4d. Total: $%4.2f\n", t.getTransactionID(), t.getTotalPrice());
+            total += t.getTotalPrice();
+            count++;
+        }
+        System.out.println();
+        System.out.printf("Between %s and %s, store %4d has completed %d transactions for a total of $%4.2f in sales.\n\n",
+                start.toString(), end.toString(), store.getStoreID(), count, total);
+    }
+
+    public void generateBoundSalesReport(LocalDate start, LocalDate end) {
+        List<Transaction> trans = repo.generateBoundSalesReport(start, end);
+        double total = 0;
+        int count = 0;
+        System.out.println();
+        for (Transaction t: trans) {
+            System.out.printf("Trans ID: %4d. Total: $%4.2f\n", t.getTransactionID(), t.getTotalPrice());
+            total += t.getTotalPrice();
+            count++;
+        }
+        System.out.println();
+        System.out.printf("Between %s and %s, %d transactions were completed company-wide for a total of $%4.2f in sales.\n\n",
+                start.toString(), end.toString(), count, total);
+    }
+
+    public void generateStoreSalesReport(String timeframe, LocalDate start, Store store) {
+        List<Transaction> trans = null;
+        switch (timeframe) {
+            case "day":
+                trans = repo.generateDayStoreReport(start, store.getStoreID());
+                break;
+            case "month":
+                trans = repo.generateMonthStoreReport(start, store.getStoreID());
+                break;
+            case "year":
+                trans = repo.generateYearStoreReport(start, store.getStoreID());
+                break;
+            default:
+                System.out.println("Invalid Input\n");
+                return;
+        }
+
+        double total = 0;
+        int count = 0;
+        System.out.println();
+        for (Transaction t: trans) {
+            System.out.printf("Trans ID: %4d. Total: $%4.2f\n", t.getTransactionID(), t.getTotalPrice());
+            total += t.getTotalPrice();
+            count++;
+        }
+        System.out.println();
+        System.out.printf("In a 1 %s timespan starting from %s, store %4d has completed %d transactions for a total of $%4.2f in sales.\n\n",
+                timeframe, start.toString(), store.getStoreID(), count, total);
+    }
+
+    public void generateGlobalSalesReport(String timeframe, LocalDate start) {
+        List<Transaction> trans = null;
+        switch (timeframe) {
+            case "day":
+                trans = repo.generateDayReport(start);
+                break;
+            case "month":
+                trans = repo.generateMonthReport(start);
+                break;
+            case "year":
+                trans = repo.generateYearReport(start);
+                break;
+            default:
+                System.out.println("Invalid Input\n");
+                return;
+        }
+
+        double total = 0;
+        int count = 0;
+        System.out.println();
+        for (Transaction t: trans) {
+            System.out.printf("Trans ID: %4d. Store: %4d Total: $%4.2f\n",
+                    t.getTransactionID(), t.getStore().getStoreID(), t.getTotalPrice());
+
+            total += t.getTotalPrice();
+            count++;
+        }
+        System.out.println();
+        System.out.printf("In a 1 %s timespan starting from %s, %4d transactions have been completed company-wide for a total of $%4.2f in sales.\n\n",
+                timeframe, start.toString(), count, total);
+    }
     public List<Staff> findCashier(Store s) {
         return staffRepo.findCashier(s.getStoreID(), Staff.Title.BILLING.name());
     }
