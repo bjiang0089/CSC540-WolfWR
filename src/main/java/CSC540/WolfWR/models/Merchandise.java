@@ -132,4 +132,10 @@ public class Merchandise extends DomainObject {
     public void setStore(Store store) {
         this.store = store;
     }
+
+    public String toString() {
+        return String.format("Product ID: %d, Name: %s, Quantity: %d, Buy Price: %f, MarketPrice: %f, Production Date: %s, Expiration Date: %s, Supplier Name: %s, Store ID: %d\n",
+                this.getProductID(), this.getProductName(), this.getQuantity(), this.getBuyPrice(), this.getMarketPrice(), this.getProductionDate().toString(),
+                this.getExpirationDate().toString(), this.getSupplier().getSupplierName(), this.getStore().getStoreID());
+    }
 }
