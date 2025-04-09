@@ -1,5 +1,7 @@
 package CSC540.WolfWR;
 
+import CSC540.WolfWR.models.Member;
+import CSC540.WolfWR.services.MemberService;
 import CSC540.WolfWR.views.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -7,6 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Scanner;
 
 @SpringBootApplication
@@ -34,6 +37,9 @@ public class WolfWRApp  implements CommandLineRunner{
     @Autowired
     private GlobalView global;
 
+    @Autowired
+    private MemberService memberServ;
+
     public static DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("MM-dd-yyyy");
 
     public static void main(String[] args) {
@@ -48,7 +54,7 @@ public class WolfWRApp  implements CommandLineRunner{
 
 
         while(true) {
-            System.out.println("Please select your role (input the number associated with your role): ");
+            System.out.println("\nPlease select your role (input the number associated with your role) or q to quit: ");
             System.out.println("[0] Load Data");
             System.out.println("[1] Manager");
             System.out.println("[2] Billing Staff");
@@ -101,5 +107,12 @@ public class WolfWRApp  implements CommandLineRunner{
             }
         }
         scan.close();
+    }
+
+    private void customerSelection() {
+        List<Member> members = memberServ.findAll();
+        for (int i = 0; i < members.size(); i++) {
+            System.out.printf("[%d] ");
+        }
     }
 }

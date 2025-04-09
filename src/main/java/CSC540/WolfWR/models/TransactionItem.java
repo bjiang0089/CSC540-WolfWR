@@ -16,12 +16,12 @@ public class TransactionItem extends DomainObject{
     @Column(name = "productID")
     private long productID;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @MapsId
     @JoinColumn(name = "transactionID")
     private Transaction transaction;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @MapsId
     @JoinColumn(name = "productID")
     private Merchandise merch;

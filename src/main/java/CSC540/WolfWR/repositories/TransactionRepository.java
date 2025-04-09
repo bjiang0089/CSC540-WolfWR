@@ -14,4 +14,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     @Query( value = "SELECT * FROM transaction WHERE member_id = :member AND purchase_date BETWEEN DATE_SUB(:end, INTERVAL 1 year) AND :end", nativeQuery = true)
     public List<Transaction> processRewards(@Param("member") Long member, @Param("end")LocalDate end);
+
+    @Query(value =  "SELECT transactionid FROM transaction", nativeQuery = true)
+    public List<Long> getIDs();
 }
