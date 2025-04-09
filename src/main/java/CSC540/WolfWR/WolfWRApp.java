@@ -1,11 +1,11 @@
 package CSC540.WolfWR;
 
-import CSC540.WolfWR.repositories.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 @SpringBootApplication
@@ -13,7 +13,9 @@ public class WolfWRApp  implements CommandLineRunner{
 
 
     @Autowired
-    private MemberRepository mRepo;
+    private DataLoader loader;
+
+    public static DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("MM-dd-yyyy");
 
     public static void main(String[] args) {
         SpringApplication.run(WolfWRApp.class, args);
@@ -28,6 +30,7 @@ public class WolfWRApp  implements CommandLineRunner{
 
         while(true) {
             System.out.println("Please select your role (input the number associated with your role): ");
+            System.out.println("[0] Load Data");
             System.out.println("[1] Manager");
             System.out.println("[2] Billing Staff");
             System.out.println("[3] Registration Staff");
@@ -44,6 +47,8 @@ public class WolfWRApp  implements CommandLineRunner{
             switch(line) {
                 case "0":
                     System.out.println("Loading Data to the database. . .\n");
+                    loader.loadData();
+                    System.out.println("Data Loaded!!!\n");
                     break;
                 case "1":
                     System.out.println("Manager View. . .\n");                    break;

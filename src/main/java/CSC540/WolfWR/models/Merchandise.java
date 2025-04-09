@@ -1,5 +1,6 @@
 package CSC540.WolfWR.models;
 
+import CSC540.WolfWR.WolfWRApp;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -22,12 +23,12 @@ public class Merchandise extends DomainObject {
     // The price the store pays for each unit from supplier
     @Min(0)
     @NotNull
-    private float buyPrice;
+    private double buyPrice;
 
     // The price customers pay for each unit from the store
     @Min(0)
     @NotNull
-    private float marketPrice;
+    private double marketPrice;
 
     @NotNull
     private LocalDate productionDate;
@@ -47,15 +48,15 @@ public class Merchandise extends DomainObject {
 
     public Merchandise() {}
 
-    public Merchandise(long productID, String productName, int quantity, float buyPrice, float marketPrice,
-                       LocalDate productionDate, LocalDate expirationDate, Supplier supplier, Store store) {
+    public Merchandise(long productID, String productName, int quantity, double buyPrice, double marketPrice,
+                       String productionDate, String expirationDate, Supplier supplier, Store store) {
         this.productID = productID;
         this.productName = productName;
         this.quantity = quantity;
         this.buyPrice = buyPrice;
         this.marketPrice = marketPrice;
-        this.productionDate = productionDate;
-        this.expirationDate = expirationDate;
+        this.productionDate = LocalDate.parse(productionDate, WolfWRApp.timeFormat);
+        this.expirationDate = LocalDate.parse(expirationDate, WolfWRApp.timeFormat);
         this.supplier = supplier;
         this.store = store;
     }
@@ -84,7 +85,7 @@ public class Merchandise extends DomainObject {
         this.quantity = quantity;
     }
 
-    public float getBuyPrice() {
+    public double getBuyPrice() {
         return buyPrice;
     }
 
@@ -92,7 +93,7 @@ public class Merchandise extends DomainObject {
         this.buyPrice = buyPrice;
     }
 
-    public float getMarketPrice() {
+    public double getMarketPrice() {
         return marketPrice;
     }
 

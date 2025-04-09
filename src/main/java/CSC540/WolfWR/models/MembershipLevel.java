@@ -14,4 +14,13 @@ public enum MembershipLevel {
             return "Platinum";
         return null;
     }
+
+    public static MembershipLevel getLevel(String level) {
+        return switch (level.toLowerCase().trim()) {
+            case "gold" -> GOLD;
+            case "silver" -> SILVER;
+            case "platinum" -> PLATINUM;
+            default -> null;
+        };
+    }
 }

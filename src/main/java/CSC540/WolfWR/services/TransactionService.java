@@ -1,14 +1,21 @@
 package CSC540.WolfWR.services;
 
 import CSC540.WolfWR.models.Transaction;
+import CSC540.WolfWR.repositories.TransactionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
+@Component
 public class TransactionService  extends  Services<Transaction, Long> {
 
-    private JpaRepository<Transaction, Long> repo;
+    @Autowired
+    private TransactionRepository repo;
 
     @Override
-    public JpaRepository<Transaction, Long> getRepo() {
+    protected JpaRepository<Transaction, Long> getRepo() {
         return this.repo;
     }
 }

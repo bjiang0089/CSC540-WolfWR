@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 public class Member extends DomainObject{
 
     @Id
+    @Column(name = "memberID")
     private long id;
 
     private String firstName;
@@ -21,11 +22,11 @@ public class Member extends DomainObject{
 
     private boolean isActive;
 
-    public Member(long id, String firstName, String lastName, MembershipLevel membershipLevel, String email, String address, String phoneNo, boolean isActive) {
+    public Member(long id, String firstName, String lastName, String ml, String email, String phoneNo, String address, boolean isActive) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.membershipLevel = membershipLevel;
+        this.membershipLevel = MembershipLevel.getLevel(ml);
         this.email = email;
         this.address = address;
         this.phoneNo = phoneNo;

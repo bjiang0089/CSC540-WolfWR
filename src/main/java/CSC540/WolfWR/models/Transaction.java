@@ -1,11 +1,11 @@
 package CSC540.WolfWR.models;
 
+import CSC540.WolfWR.WolfWRApp;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class Transaction extends DomainObject {
@@ -31,22 +31,36 @@ public class Transaction extends DomainObject {
     @NotNull
     private LocalDate purchaseDate;
 
-    private float totalPrice;
+    private double totalPrice;
 
-    @OneToMany
-    private Set<Merchandise> productList;
+//    @OneToMany(cascade = CascadeType.ALL)
+//    private List<TransactionItem> productList;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<TransactionItem> productList;
 
     public Transaction() {}
 
     public Transaction(long transactionID, Store store, Member member, Staff cashierID,
-                       LocalDate purchaseDate, float totalPrice, Set<Merchandise> productList) {
+                       String purchaseDate, float totalPrice, List<TransactionItem> productList) {
         this.transactionID = transactionID;
         this.store = store;
         this.member = member;
         this.cashierID = cashierID;
-        this.purchaseDate = purchaseDate;
+        this.purchaseDate = LocalDate.parse(purchaseDate);
         this.totalPrice = totalPrice;
         this.productList = productList;
+    }
+
+    public Transaction(long transactionID, Store store, Member member, Staff cashierID,
+                       String purchaseDate, double totalPrice) {
+        this.transactionID = transactionID;
+        this.store = store;
+        this.member = member;
+        this.cashierID = cashierID;
+        this.purchaseDate = LocalDate.parse(purchaseDate, WolfWRApp.timeFormat);
+        this.totalPrice = totalPrice;
+        this.productList = new ArrayList<TransactionItem>();
     }
 
     public Staff getCashierID() {
@@ -72,4 +86,54 @@ public class Transaction extends DomainObject {
     public void setStore(Store store) {
         this.store = store;
     }
+
+    public long getTransactionID() {
+        return transactionID;
+    }
+
+    public void setTransactionID(long transactionID) {
+        this.transactionID = transactionID;
+    }
+
+    public LocalDate getPurchaseDate() {
+        return purchaseDate;
+    }
+
+    public void setPurchaseDate(LocalDate purchaseDate) {
+        this.purchaseDate = purchaseDate;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+
+    public List<TransactionItem> getProductList() {
+        return productList;
+    }
+
+    public void setProductList(List<TransactionItem> productList) {
+        this.productList = productList;
+    }
+
+    public void addMerchandise(Merchandise m){
+        TransactionItem it = new TransactionItem(this, m);
+        this.productList.add(it);
+    }
+
+
+//    public List<Merchandise> getProductList() {
+//        return productList;
+//    }
+//
+//    public void setProductList(List<Merchandise> productList) {
+//        this.productList = productList;
+//    }
+//    public void addMerchandise(Merchandise m){
+//        this.productList.add(m);
+//    }
 }

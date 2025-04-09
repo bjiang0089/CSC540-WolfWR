@@ -1,5 +1,6 @@
 package CSC540.WolfWR.models;
 
+import CSC540.WolfWR.WolfWRApp;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -32,11 +33,11 @@ public class Discount extends DomainObject {
 
     public Discount() {}
 
-    public Discount( Merchandise merch, LocalDate start, int discountPercentage, LocalDate end) {
+    public Discount( Merchandise merch, int discountPercentage, String start, String end) {
         this.productID = merch;
-        this.start = start;
+        this.start = LocalDate.parse(start, WolfWRApp.timeFormat);
         this.discountPercentage = discountPercentage;
-        this.end = end;
+        this.end = LocalDate.parse(end, WolfWRApp.timeFormat);
     }
 
 

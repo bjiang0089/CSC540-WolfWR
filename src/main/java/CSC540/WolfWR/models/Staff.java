@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Staff extends DomainObject{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private long staffID;
 
     @ManyToOne
@@ -38,8 +38,15 @@ public class Staff extends DomainObject{
 
     public Staff() {}
 
-    public Staff(long staffID, Store store, String name, int age, String address,
-                 String title, String email, String phone, int employmentTime) {
+    public Staff(String name,
+                 String address,
+                 int age,
+                 String email,
+                 String title,
+                 String phone,
+                 int employmentTime,
+                long staffID,
+                 Store store) {
         this.staffID = staffID;
         this.store = store;
         this.name = name;
@@ -51,11 +58,11 @@ public class Staff extends DomainObject{
         this.employmentTime = employmentTime;
     }
 
-    public long getStaffID() {
+    public long getStaffId() {
         return staffID;
     }
 
-    public void setStaffID(long staffID) {
+    public void setStaffId(long staffID) {
         this.staffID = staffID;
     }
 

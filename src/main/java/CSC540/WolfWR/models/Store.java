@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 public class Store extends DomainObject {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private long storeID;
 
     @OneToOne
@@ -22,7 +22,7 @@ public class Store extends DomainObject {
 
     public Store() {};
 
-    public Store(long storeID, Staff manager, String address, String phone) {
+    public Store(long storeID, String phone, String address, Staff manager) {
         this.storeID = storeID;
         this.manager = manager;
         this.address = address;
@@ -59,5 +59,9 @@ public class Store extends DomainObject {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String toString() {
+        return String.format("\n\nStore ID: %d. Address\n\n", this.storeID, this.address);
     }
 }

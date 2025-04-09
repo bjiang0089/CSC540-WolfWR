@@ -1,39 +1,44 @@
 package CSC540.WolfWR.models;
 
+import CSC540.WolfWR.WolfWRApp;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
-
 @Entity
-public class SignUp extends DomainObject {
+public class SignUp extends DomainObject{
 
     @Id
-    private long memberID;
+    @Column(name = "memberID")
+    private long memberID;  // Use memberID as the primary key for SignUp
 
     @ManyToOne
     @NotNull
     @JoinColumn(name = "storeID")
     private Store store;
 
-    @MapsId
-    @OneToOne
-    @NotNull
-    @JoinColumn(name = "memberID")
-    private Member member;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @MapsId  // Maps memberID as the primary key of SignUp
+//    @NotNull
+//    @JoinColumn(name = "memberID", insertable = false, updatable = false)  // Don't insert or update the memberID here
+//    private Member member;
 
     @NotNull
     private LocalDate signUpDate;
 
-    public SignUp() {}
-
-    public SignUp(Store store, Member member, LocalDate signUpDate) {
-        this.memberID = member.getId();
+    // Constructor with parameters
+    public SignUp(Store store,  String signUpDate, Member member) {
+        this.memberID = member.getId(); // Set memberID from the existing Member's ID
         this.store = store;
-        this.member = member;
-        this.signUpDate = signUpDate;
+//        this.member = member;  // Reference the existing Member
+        this.signUpDate = LocalDate.parse(signUpDate, WolfWRApp.timeFormat);
     }
 
+    // Default constructor
+    public SignUp() {}
+
+
+    // Getters and Setters
     public long getMemberID() {
         return memberID;
     }
@@ -50,13 +55,13 @@ public class SignUp extends DomainObject {
         this.signUpDate = signUpDate;
     }
 
-    public Member getMember() {
-        return member;
-    }
-
-    public void setMember(Member member) {
-        this.member = member;
-    }
+//    public Member getMember() {
+//        return member;
+//    }
+//
+//    public void setMember(Member member) {
+//        this.member = member;
+//    }
 
     public Store getStore() {
         return store;
@@ -65,5 +70,4 @@ public class SignUp extends DomainObject {
     public void setStore(Store store) {
         this.store = store;
     }
-
 }
