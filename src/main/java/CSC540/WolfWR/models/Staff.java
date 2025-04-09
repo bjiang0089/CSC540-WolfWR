@@ -24,9 +24,6 @@ public class Staff extends DomainObject{
     @Column(name = "address", nullable = false, length = 128)
     private String address;
 
-    @Column(name = "title", nullable = false, length = 32)
-    private String title;
-
     @Column(name = "phone", nullable = false, length = 16)
     private String phone;
 
@@ -35,6 +32,13 @@ public class Staff extends DomainObject{
 
     @Column(name = "employmentTime", nullable = false)
     private int employmentTime;
+    
+    private enum Title {
+        MANAGER, REGISTRATION, BILLING, WAREHOUSE
+    }
+
+    @Column(name = "title", nullable = false)
+    private Title title;
 
     public Staff() {}
 
@@ -52,14 +56,14 @@ public class Staff extends DomainObject{
         this.name = name;
         this.age = age;
         this.address = address;
-        this.title = title;
+        this.title = getTitleFromString(title);
         this.email = email;
         this.phone = phone;
         this.employmentTime = employmentTime;
     }
 
     public long getStaffId() {
-        return staffID;
+        return this.staffID;
     }
 
     public void setStaffId(long staffID) {
@@ -67,7 +71,7 @@ public class Staff extends DomainObject{
     }
 
     public Store getStore() {
-        return store;
+        return this.store;
     }
 
     public void setStore(Store store) {
@@ -75,7 +79,7 @@ public class Staff extends DomainObject{
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -83,7 +87,7 @@ public class Staff extends DomainObject{
     }
 
     public String getAddress() {
-        return address;
+        return this.address;
     }
 
     public void setAddress(String address) {
@@ -91,23 +95,23 @@ public class Staff extends DomainObject{
     }
 
     public int getAge() {
-        return age;
+        return this.age;
     }
 
     public void setAge(int age) {
         this.age = age;
     }
 
-    public String getTitle() {
-        return title;
+    public Title getTitle() {
+        return this.title;
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.title = getTitleFromString(title);
     }
 
     public String getPhone() {
-        return phone;
+        return this.phone;
     }
 
     public void setPhone(String phone) {
@@ -115,7 +119,7 @@ public class Staff extends DomainObject{
     }
 
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
     public void setEmail(String email) {
@@ -123,10 +127,19 @@ public class Staff extends DomainObject{
     }
 
     public int getEmploymentTime() {
-        return employmentTime;
+        return this.employmentTime;
     }
 
     public void setEmploymentTime(int employmentTime) {
         this.employmentTime = employmentTime;
+    }
+
+    public Title getTitleFromString(String title) {
+        for (Title t : Title.class.getEnumConstants()) {
+            if (t.name().equalsIgnoreCase(title)) {
+                return t;
+            }
+        }
+        return null;
     }
 }
