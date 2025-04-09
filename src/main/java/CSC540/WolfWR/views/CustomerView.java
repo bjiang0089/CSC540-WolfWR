@@ -153,7 +153,7 @@ public class CustomerView {
         System.out.println("[0] Checkout\n");
         for (int i = 0; i < merch.size(); i++) {
             Merchandise m = merch.get(i);
-            System.out.printf("[%2d] %s\n", i + 1, m.getProductName());
+            System.out.printf("[%2d] $%3.2f %s\n", i + 1, m.getMarketPrice(),m.getProductName());
         }
         System.out.print("> ");
     }
