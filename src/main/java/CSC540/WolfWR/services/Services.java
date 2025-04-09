@@ -3,6 +3,7 @@ package CSC540.WolfWR.services;
 import CSC540.WolfWR.models.DomainObject;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public abstract class Services<T extends DomainObject, K> {
@@ -22,6 +23,7 @@ public abstract class Services<T extends DomainObject, K> {
         return obj.orElse(null);
     }
 
-
-
+    public List<T> findAll() {
+        return getRepo().findAll();
+    }
 }

@@ -1,5 +1,6 @@
 package CSC540.WolfWR;
 
+import CSC540.WolfWR.views.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -14,6 +15,24 @@ public class WolfWRApp  implements CommandLineRunner{
 
     @Autowired
     private DataLoader loader;
+
+    @Autowired
+    private BillingStaffView billing;
+
+    @Autowired
+    private RegistrationView registration;
+
+    @Autowired
+    private WarehouseView warehouse;
+
+    @Autowired
+    private ManagerView manager;
+
+    @Autowired
+    private CustomerView customer;
+
+    @Autowired
+    private GlobalView global;
 
     public static DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("MM-dd-yyyy");
 
@@ -36,6 +55,7 @@ public class WolfWRApp  implements CommandLineRunner{
             System.out.println("[3] Registration Staff");
             System.out.println("[4] Warehouse Staff");
             System.out.println("[5] Customer");
+            System.out.println("[6] Global / Corporate");
             System.out.print("> ");
 
             String line = scan.nextLine().trim();
@@ -51,16 +71,31 @@ public class WolfWRApp  implements CommandLineRunner{
                     System.out.println("Data Loaded!!!\n");
                     break;
                 case "1":
-                    System.out.println("Manager View. . .\n");                    break;
+                    System.out.println("Manager View. . .\n");
+                    manager.view(scan);
+                    break;
                 case "2":
-                    System.out.println("Billing Staff View. . .\n");                    break;
+                    System.out.println("Billing Staff View. . .\n");
+                    billing.view(scan);
+                    break;
                 case "3":
-                    System.out.println("Registration Staff View. . .\n");                    break;
+                    System.out.println("Registration Staff View. . .\n");
+                    registration.view(scan);
+                    break;
                 case "4":
-                    System.out.println("Warehouse Staff View. . .\n");                    break;
+                    System.out.println("Warehouse Staff View. . .\n");
+                    warehouse.view(scan);
+                    break;
                 case "5":
                     System.out.println("Customer View. . .\n");
+                    customer.view(scan);
                     break;
+
+                case "6":
+                    System.out.println("Global View. . .");
+                    global.view(scan);
+                    break;
+
                 default:
                     System.out.println("Unknown role selected\n");
             }
