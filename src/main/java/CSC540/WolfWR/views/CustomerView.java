@@ -1,10 +1,8 @@
 package CSC540.WolfWR.views;
 
+import CSC540.WolfWR.WolfWRApp;
 import CSC540.WolfWR.models.*;
-import CSC540.WolfWR.services.MemberService;
-import CSC540.WolfWR.services.MerchandiseService;
-import CSC540.WolfWR.services.StoreService;
-import CSC540.WolfWR.services.TransactionService;
+import CSC540.WolfWR.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +27,10 @@ public class CustomerView {
 
     @Autowired
     private MemberService memberServ;
+
+    @Autowired
+    private DiscountService discountServ;
+
 
     public void view(Scanner scan) {
         List<Member> members = memberServ.findAll();
@@ -88,6 +90,17 @@ public class CustomerView {
 
     @Transactional
     public void makePurchase(Scanner scan, Member active) {
+        System.out.println("Please enter a date in the format mm-dd-yyyy:");
+        System.out.print("> ");
+
+        String input = scan.nextLine().trim();
+        LocalDate date = null;
+        try {
+            date = LocalDate.parse(input, WolfWRApp.timeFormat);
+        } catch (Exception e) {
+            System.out.println("Invalid Date");
+            return;
+        }
         // Store Selection
         Store current = null;
         List<Store> locations = storeServ.findAll();
@@ -102,7 +115,8 @@ public class CustomerView {
             return;
         }
 
-        Transaction t = getNewTransaction(current, active);
+        Transaction t = getNewTransaction(current, active, date);
+
         if (t == null) {
             System.out.println("There are no cashiers at this store\n");
             return;
@@ -116,7 +130,7 @@ public class CustomerView {
 
             // Item Selection
             try {
-                String input = scan.nextLine().trim();
+                input = scan.nextLine().trim();
 
                 if (input.equals("-1")) {
                     System.out.println("Cancelling Transaction. . .\n");
@@ -142,17 +156,29 @@ public class CustomerView {
             }
         }
         // Checkout
-        double total = calculateTotal(t.getProductList());
-        System.out.printf("The total for you transaction is $%3.2f.\n", total);
+        double total = calculateTotal(date, t.getProductList());
+
+
         t.setTotalPrice(total);
         transServ.completePurchase(t);
+        System.out.printf("\nThe total for you transaction is $%3.2f.\n", total);
         System.out.println("Purchase Complete!\n");
     }
 
-    private double calculateTotal(List<TransactionItem> cart) {
+    private double calculateTotal(LocalDate date, List<TransactionItem> cart) {
         double total = 0;
+        double price = 0;
+
+        List<Discount> discounts = discountServ.findByDate(date);
         for (TransactionItem m: cart) {
-            total += m.getMerch().getMarketPrice();
+            discounts = discountServ.findByProductIDAndDate(m.getMerch(), date);
+            price = m.getMerch().getMarketPrice();
+            if (!discounts.isEmpty()) {
+                Discount d = discounts.get(0);
+                price *= (100 - d.getDiscountPercentage());
+                price /= 100;
+            }
+            total += price;
         }
         return total;
     }
@@ -185,17 +211,17 @@ public class CustomerView {
     }
 
     @Transactional
-    public Transaction getNewTransaction(Store s, Member m) {
+    public Transaction getNewTransaction(Store s, Member m, LocalDate date) {
         Transaction t = new Transaction();
         t.setTransactionID( transServ.generateID() );
         t.setStore(s);
-        t.setPurchaseDate(LocalDate.now());
+        t.setPurchaseDate(date);
         t.setProductList( new ArrayList<TransactionItem>() );
         t.setMember(m);
         List<Staff> cashiers = transServ.findCashier(s);
         if (cashiers.isEmpty()) {
-            System.out.println("There are no cashiers at this store\n");
-            return null;
+            t.setCashierID(null);
+            return t;
         }
         Staff cash = cashiers.get( 0 );
 
