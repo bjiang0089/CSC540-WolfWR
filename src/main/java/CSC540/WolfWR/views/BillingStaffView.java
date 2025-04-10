@@ -17,22 +17,49 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
+/**
+ * This class provides the billing staff view functionality for interacting with the system. 
+ * It allows the billing staff to generate bills for suppliers, calculate membership rewards for members, 
+ * and display relevant transaction and product information.
+ * <p>
+ * The view utilizes services like {@link TransactionService}, {@link MerchandiseService}, 
+ * {@link MemberService}, and {@link SupplierService} to handle the business logic for the 
+ * different actions available to the billing staff.
+ * </p>
+ */
 @Component
 public class BillingStaffView {
 
+    /**
+     * The service used for performing operations on {@link Transaction} entities.
+     */
     @Autowired
     private TransactionService transServ;
 
+    /**
+     * The service used for performing operations on {@link Merchandise} entities.
+     */
     @Autowired
     private MerchandiseService merchServ;
 
+    /**
+     * The service used for performing operations on {@link Member} entities.
+     */
     @Autowired
     private MemberService memberServ;
 
+    /**
+     * The service used for performing operations on {@link Supplier} entities.
+     */
     @Autowired
     private SupplierService supplierServ;
 
-
+    /**
+     * Displays the billing staff options and processes the user's choice.
+     * The user can select an action to generate bills for suppliers or calculate membership rewards.
+     * 
+     * @param scan The {@link Scanner} object used to take user input.
+     */
     public void view(Scanner scan) {
         String input = null;
         //BillingStaffView view = new BillingStaffView();
@@ -66,6 +93,12 @@ public class BillingStaffView {
 
     }
 
+    /**
+     * Prompts the user to generate a bill for a supplier by selecting a supplier and a time frame.
+     * Displays the list of deliveries during the selected period and calculates the total payment for the supplier.
+     * 
+     * @param scan The {@link Scanner} object used to take user input.
+     */
     public void generateBill(Scanner scan) {
 
         // TODO: Generate list of suppliers
@@ -102,6 +135,12 @@ public class BillingStaffView {
 
     }
 
+    /**
+     * Prompts the user to calculate the membership rewards for a specific member during a defined period.
+     * Displays the total purchases made by the member and calculates the rewards based on the specified percentage.
+     * 
+     * @param scan The {@link Scanner} object used to take user input.
+     */
     public void tabulateRewards(Scanner scan) {
 
         // Generate list of members and select
@@ -152,6 +191,12 @@ public class BillingStaffView {
                 m.getFirstName(), m.getLastName(), total, total * 0.01 * percent);
     }
 
+    /**
+     * Displays the deliveries for a given supplier, showing the product name, buy price, quantity, and total price.
+     * 
+     * @param deliveries The list of {@link Merchandise} delivered during the selected period.
+     * @return The grand total of all the deliveries.
+     */
     public double showDeliveries(List<Merchandise> deliveries) {
         double grandTotal = 0;
         for (Merchandise m: deliveries) {
@@ -163,6 +208,11 @@ public class BillingStaffView {
         return grandTotal;
     }
 
+    /**
+     * Displays the list of suppliers with an index for selection.
+     * 
+     * @param suppliers The list of {@link Supplier} entities to display.
+     */
     private void displaySuppliers(List<Supplier> suppliers) {
         for (int i = 0; i < suppliers.size(); i++) {
             System.out.printf("[%d] %s\n", i, suppliers.get(i).getSupplierName());
@@ -170,6 +220,12 @@ public class BillingStaffView {
         System.out.print("> ");
     }
 
+    /**
+     * Calculates the total amount of all purchases from a list of transactions.
+     * 
+     * @param trans The list of {@link Transaction} entities.
+     * @return The total amount of all transactions.
+     */
     private double tabulateTotalPurchases(List<Transaction> trans) {
         double total = 0;
         for (Transaction t: trans) {
@@ -178,6 +234,11 @@ public class BillingStaffView {
         return total;
     }
 
+    /**
+     * Displays the list of members with an index for selection.
+     * 
+     * @param members The list of {@link Member} entities to display.
+     */
     private void displayMembers(List<Member> members) {
         for (int i = 0; i < members.size(); i++) {
             Member m = members.get(i);
@@ -185,5 +246,4 @@ public class BillingStaffView {
         }
         System.out.print("> ");
     }
-
 }
