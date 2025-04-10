@@ -33,6 +33,11 @@ public class MerchandiseService extends Services<Merchandise, Long> {
         return this.repo.storeInventory(s.getStoreID());
     }
 
+    public List<Merchandise> totalStoreInventory(Store s) {
+        return this.repo.totalStoreInventory(s.getStoreID());
+    }
+
+
     public long generateID() {
         List<Long> ids = repo.getIDs();
         return Collections.max(ids) + 1;
