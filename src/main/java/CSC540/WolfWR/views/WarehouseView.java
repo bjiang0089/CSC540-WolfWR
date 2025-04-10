@@ -34,7 +34,7 @@ public class WarehouseView {
     public void view(Scanner scan) {
         String input = null;
 
-        System.out.println("Select an action with the number provided:\n>");
+        System.out.println("Select an action with the number provided:\n");
 
         System.out.println("[0] Return to Home Page");
         System.out.println("[1] View All Inventory");
@@ -46,11 +46,14 @@ public class WarehouseView {
         input = scan.nextLine().trim();
 
         if (input.equals("0")) {
+            System.out.println();
             return;
         }
 
+        System.out.println();
+        List<Store> stores = storeServ.findAll(); 
+        System.out.println(); 
         System.out.println("Select your store:");
-        List<Store> stores = storeServ.findAll();
         displayStores(stores);
         Store myStore = null;
         try {
@@ -59,10 +62,13 @@ public class WarehouseView {
             System.out.println("Invalid Store\n");
             return;
         }
-
         switch (input.trim()) {
             case "1":
-                viewAllInventory(merchServ.storeInventory(myStore), scan);
+                List<Merchandise> inventory = merchServ.storeInventory(myStore);
+                viewAllInventory(inventory, scan);
+                System.out.println();
+                System.out.println("Success!");
+                System.out.println();
                 break;
             case "2":
                 transferInventory(myStore, scan);
@@ -90,9 +96,9 @@ public class WarehouseView {
     public void transferInventory(Store myStore, Scanner scan) {
         List<Store> stores = storeServ.findAll();
         Store theirStore = null;
+        System.out.println();
         System.out.println("Select the recipient store:");
         displayStores(stores);
-        System.out.print("> ");
         try {
             theirStore = stores.get(Integer.parseInt(scan.nextLine().trim()));
         } catch (Exception e) {
@@ -106,6 +112,7 @@ public class WarehouseView {
         List<Merchandise> myInventory = merchServ.storeInventory(myStore);
         List<Merchandise> otherInventory = merchServ.storeInventory(theirStore);
 
+        System.out.println();
         System.out.println("Select the merchandise to transfer:");
         viewAllInventory(myInventory, scan);
         System.out.print("> ");
@@ -124,26 +131,36 @@ public class WarehouseView {
                 break;
             }
         }
+        System.out.println();
+        System.out.print("Enter the quantity of merchandise to transfer:\n");
+        System.out.print("> ");
+        try {
+            transferAmt = Integer.parseInt(scan.nextLine().trim());
+        } catch (Exception e) {
+            System.out.println("Invalid Quantity\n");
+            return;
+        }
         if (null != theirMerch) {
-            System.out.println("Enter the quantity of merchandise to transfer:\n> ");
-            try {
-                transferAmt = Integer.parseInt(scan.nextLine().trim());
-                if (transferAmt == 0) {
-                    System.out.println("Cannot Transfer 0 Units of Merchandise\n");
-                    return;
-                } else if (myMerch.getQuantity() - transferAmt < 0) {
-                    System.out.println("Insufficient Amount of Merchandise to Transfer\n");
-                    return;
-                } else {
-                    myMerch.setQuantity(myMerch.getQuantity() - transferAmt);
-                    theirMerch.setQuantity(theirMerch.getQuantity() + transferAmt);
-                    System.out.println("Success!\n");
-                }
-            } catch (Exception e) {
-                System.out.println("Invalid Quantity\n");
+            if (transferAmt == 0) {
+                System.out.println("Cannot Transfer 0 Units of Merchandise\n");
                 return;
+            } else if (myMerch.getQuantity() - transferAmt < 0) {
+                System.out.println("Insufficient Amount of Merchandise to Transfer\n");
+                return;
+            } else {
+                myMerch.setQuantity(myMerch.getQuantity() - transferAmt);
+                theirMerch.setQuantity(theirMerch.getQuantity() + transferAmt);
+                System.out.println();
+                System.out.println("Success!\n");
             }
         } else {
+            if (transferAmt == 0) {
+                System.out.println("Cannot Transfer 0 Units of Merchandise\n");
+                return;
+            } else if (myMerch.getQuantity() - transferAmt < 0) {
+                System.out.println("Insufficient Amount of Merchandise to Transfer\n");
+                return;
+            }
             long newId = merchServ.generateID();
             String name = myMerch.getProductName();
             int quantity = transferAmt;
@@ -165,21 +182,27 @@ public class WarehouseView {
             theirMerch.setStore(theirStore);
 
             merchServ.save(theirMerch);
+            System.out.println();
             System.out.println("Success!\n");
         }
     } 
 
     public void viewAllInventory(List<Merchandise> inventory, Scanner scan) {
-        int idx = 0;
-        for (Merchandise merch : inventory) {
-            System.out.printf("[%d] %s\n", idx, merch.toString());
-            idx++;
+        System.out.println();
+        if (inventory.size() == 0) {
+            System.out.println("You have no inventory to display...");
+        } else {
+            int idx = 0;
+            for (Merchandise merch : inventory) {
+                System.out.printf("[%d] %s", idx, merch.toString());
+                idx++;
+            }
         }
     }
 
     public void processReturn(Store store, Scanner scan) {
-        System.out.println("Select the merchandise being returned:");
         List<Merchandise> inventory = merchServ.storeInventory(store);
+        System.out.println("Select the merchandise being returned:");
         viewAllInventory(inventory, scan);
         System.out.print("> ");
         Merchandise merch = null;
@@ -189,6 +212,7 @@ public class WarehouseView {
             System.out.println("Invalid Merchandise\n");
             return;
         }
+        System.out.println();
         System.out.println("Enter the quantity of merchandise being returned:");
         int amt = 0;
         System.out.print("> ");
@@ -199,6 +223,7 @@ public class WarehouseView {
             return;
         }
         merch.setQuantity(merch.getQuantity() + amt);
+        System.out.println();
         System.out.println("Success!\n");
     }
 
@@ -221,7 +246,7 @@ public class WarehouseView {
             if (choice == 0) {
                 addMerchandise(store, scan);
             } else {
-                List<Merchandise> inventory = merchServ.storeInventory(store);
+                List<Merchandise> inventory = merchServ.totalStoreInventory(store);
                 viewAllInventory(inventory, scan);
                 System.out.print("> ");
                 Merchandise merch = null;
