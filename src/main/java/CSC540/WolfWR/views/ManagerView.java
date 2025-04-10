@@ -1,16 +1,14 @@
 package CSC540.WolfWR.views;
 
-import CSC540.WolfWR.models.Member;
-import CSC540.WolfWR.models.Staff;
-import CSC540.WolfWR.models.Store;
-import CSC540.WolfWR.services.MemberService;
-import CSC540.WolfWR.services.StaffService;
-import CSC540.WolfWR.services.StoreService;
+import CSC540.WolfWR.WolfWRApp;
+import CSC540.WolfWR.models.*;
+import CSC540.WolfWR.services.*;
 import ch.qos.logback.core.encoder.EchoEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
@@ -39,6 +37,10 @@ public class ManagerView {
     private StaffService staffService;
     @Autowired
     private StoreService storeService;
+    @Autowired
+    private MerchandiseService merchandiseService;
+    @Autowired
+    private DiscountService discountService;
 
 
     public void view(Scanner scan) {
@@ -55,6 +57,7 @@ public class ManagerView {
             System.out.println("[5] View History");
             System.out.println("[6] Hire New Staff");
             System.out.println("[7] Fire Staff");
+            System.out.println("[8] Create Discount");
 
             System.out.print("> ");
             input = scan.nextLine().trim();
@@ -92,6 +95,9 @@ public class ManagerView {
                 case "7":
                     fireStaff(scan);
                     break;
+                case "8":
+                    createDiscount(scan);
+                    break;
                 default:
                     System.out.println("\nUnknown action\n");
             }
@@ -99,10 +105,72 @@ public class ManagerView {
 
     }
 
+    public void createDiscount(Scanner scan) {
+        Store store = selectStore(scan);
+        List<Merchandise> merch = merchandiseService.storeInventory(store);
+
+        System.out.println("\nSelect a product:");
+        Merchandise m = null;
+        for (int i = 0; i < merch.size(); i++) {
+            m = merch.get(i);
+            System.out.printf("[%2d] Store: %4d. Buy Price: %3.2f. Market Price: %3.2f. Product: %s\n",
+                    i + 1, m.getStore().getStoreID(), m.getBuyPrice(), m.getMarketPrice(), m.getProductName());
+        }
+        System.out.print("> ");
+        String input = scan.nextLine().trim();
+
+        try {
+            m = merch.get( Integer.parseInt(input) - 1);
+        } catch (Exception e) {
+            System.out.println("Invalid Product");
+            return;
+        }
+
+        System.out.println("Please enter discount percentage as a whole number (0 - 100)");
+        System.out.print("> ");
+        input = scan.nextLine().trim();
+        int percent = 0;
+        try {
+            percent = Integer.parseInt(input);
+        } catch (Exception e) {
+            System.out.println("Error reading percentage\n");
+            return;
+        }
+
+        System.out.println("Please provide the *START* date for the report as mm-dd-yyyy:");
+        System.out.print("> ");
+        input = scan.nextLine().trim();
+        LocalDate start = null;
+        try {
+            start = LocalDate.parse(input, WolfWRApp.timeFormat);
+        } catch (Exception e) {
+            System.out.println("Unable to parse start date\n");
+            return;
+        }
+
+        System.out.println("Please provide the *END* date for the report as mm-dd-yyyy:");
+        System.out.print("> ");
+        input = scan.nextLine().trim();
+        LocalDate end = null;
+        try {
+            end = LocalDate.parse(input, WolfWRApp.timeFormat);
+        } catch (Exception e) {
+            System.out.println("Unable to parse start date\n");
+            return;
+        }
+
+        Discount d = new Discount(m, percent, start, end);
+        try {
+            discountService.save(d);
+            System.out.println("\nDiscount Saved\n");
+        } catch (Exception e) {
+            System.out.println("Error occured while saving\n");
+        }
+
+    }
+
     public void hireNewStaff(Scanner scan) {
         String input = "";
-
-        System.out.println("\nSelect a store:");
         Store store = selectStore(scan);
         if (store == null) {
             return;
@@ -169,9 +237,11 @@ public class ManagerView {
     }
 
     public void fireStaff(Scanner scan) {
-        System.out.println("\nSelect a store:");
-        System.out.print("> ");
         Store store = selectStore(scan);
+
+        if (store == null) {
+            return;
+        }
         List<Staff> staff = staffService.findAllByStore(store);
 
         System.out.println("Select a staff member:");
@@ -195,6 +265,8 @@ public class ManagerView {
 
     public Store selectStore(Scanner scan) {
         List<Store> locs = storeService.findAll();
+        System.out.println("\nSelect store:");
+        System.out.print("> ");
 
         for(int i = 0; i < locs.size(); i++) {
             Store s = locs.get(i);

@@ -40,6 +40,13 @@ public class Discount extends DomainObject {
         this.end = LocalDate.parse(end, WolfWRApp.timeFormat);
     }
 
+    public Discount( Merchandise merch, int discountPercentage, LocalDate start, LocalDate end) {
+        this.productID = merch;
+        this.start = start;
+        this.discountPercentage = discountPercentage;
+        this.end = end;
+    }
+
 
     public Merchandise getProductID() {
         return productID;
