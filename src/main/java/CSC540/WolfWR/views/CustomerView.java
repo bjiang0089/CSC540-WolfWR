@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +18,9 @@ import java.util.Scanner;
 @Transactional
 @Component
 public class CustomerView {
+
+    @Autowired
+    private DataSource source;
 
     @Autowired
     private StoreService storeServ;
@@ -61,7 +67,12 @@ public class CustomerView {
                     System.out.println("Returning to Home Page. . .\n");
                     return;
                 case "1":
-                    makePurchase(scan, activeMember);
+                    try {
+                        makePurchase(scan, activeMember);
+                    } catch (Exception e) {
+                        System.out.println("Error while processing transaction.");
+                    }
+
                     break;
                 case "2":
                     viewHistory(activeMember);
@@ -89,80 +100,100 @@ public class CustomerView {
     }
 
     @Transactional
-    public void makePurchase(Scanner scan, Member active) {
-        System.out.println("Please enter a date in the format mm-dd-yyyy:");
-        System.out.print("> ");
-
-        String input = scan.nextLine().trim();
-        LocalDate date = null;
+    public void makePurchase(Scanner scan, Member active) throws SQLException {
+        Connection conn = null;
         try {
-            date = LocalDate.parse(input, WolfWRApp.timeFormat);
+            conn = source.getConnection();
         } catch (Exception e) {
-            System.out.println("Invalid Date");
+            System.out.println("Error connecting to the database.\n");
             return;
         }
-        // Store Selection
-        Store current = null;
-        List<Store> locations = storeServ.findAll();
-        System.out.println("\nPlease select a store:");
-        listLocations(locations);
+        try  {
+            conn.setAutoCommit(false);
+            System.out.println("Please enter a date in the format mm-dd-yyyy:");
+            System.out.print("> ");
 
-        try {
-            int idx = Integer.parseInt( scan.nextLine().trim() );
-            current = locations.get(idx - 1);
-        } catch (Exception e) {
-            System.out.println("Invalid Store\n");
-            return;
-        }
-
-        Transaction t = getNewTransaction(current, active, date);
-
-        if (t == null) {
-            System.out.println("There are no cashiers at this store\n");
-            return;
-        }
-
-        // Get list of transaction items
-        List<Merchandise> product = merchServ.storeInventory(current);
-        while(true) {
-            System.out.println("Please make a selection:");
-            listInventory(product);
-
-            // Item Selection
+            String input = scan.nextLine().trim();
+            LocalDate date = null;
             try {
-                input = scan.nextLine().trim();
-
-                if (input.equals("-1")) {
-                    System.out.println("Cancelling Transaction. . .\n");
-                    return;
-                } else if (input.equals("0")) {
-                    System.out.println("Proceeding to Checkout. . .");
-                    break;
-                } else {
-                    int idx = Integer.parseInt(input) - 1;
-                    Merchandise m = product.get(idx);
-                    // Add Merch to cart
-                    t.addMerchandise( m );
-                    // Buy each Item once
-                    product.remove( idx );
-                    System.out.printf("%s added to cart\n\n", m.getProductName());
-                }
-            } catch (NumberFormatException n) {
-                System.out.println("Number Format Exception\n");
+                date = LocalDate.parse(input, WolfWRApp.timeFormat);
             } catch (Exception e) {
-                System.out.println("\nError reading selection\n");
-                e.getStackTrace();
-                continue;
+                System.out.println("Invalid Date");
+                conn.rollback();
+                return;
             }
+            // Store Selection
+            Store current = null;
+            List<Store> locations = storeServ.findAll();
+            System.out.println("\nPlease select a store:");
+            listLocations(locations);
+
+            try {
+                int idx = Integer.parseInt(scan.nextLine().trim());
+                current = locations.get(idx - 1);
+            } catch (Exception e) {
+                System.out.println("Invalid Store\n");
+                conn.rollback();
+                return;
+            }
+
+            Transaction t = getNewTransaction(current, active, date);
+
+            if (t == null) {
+                System.out.println("There are no cashiers at this store\n");
+                conn.rollback();
+                return;
+            }
+
+            // Get list of transaction items
+            List<Merchandise> product = merchServ.storeInventory(current);
+            while (true) {
+                System.out.println("Please make a selection:");
+                listInventory(product);
+
+                // Item Selection
+                try {
+                    input = scan.nextLine().trim();
+
+                    if (input.equals("-1")) {
+                        System.out.println("Cancelling Transaction. . .\n");
+                        conn.rollback();
+                        return;
+                    } else if (input.equals("0")) {
+                        System.out.println("Proceeding to Checkout. . .");
+                        break;
+                    } else {
+                        int idx = Integer.parseInt(input) - 1;
+                        Merchandise m = product.get(idx);
+                        // Add Merch to cart
+                        t.addMerchandise(m);
+                        // Buy each Item once
+                        product.remove(idx);
+                        System.out.printf("%s added to cart\n\n", m.getProductName());
+                    }
+                } catch (NumberFormatException n) {
+                    System.out.println("Number Format Exception\n");
+                } catch (Exception e) {
+                    System.out.println("\nError reading selection\n");
+                    e.getStackTrace();
+                    continue;
+                }
+            }
+
+
+            // Checkout
+            double total = calculateTotal(date, t.getProductList());
+
+
+            t.setTotalPrice(total);
+            transServ.completePurchase(t);
+            System.out.printf("\nThe total for you transaction is $%3.2f.\n", total);
+            System.out.println("Purchase Complete!\n");
+            conn.commit();
+        } catch (Exception e) {
+            conn.rollback();
+            throw e;
         }
-        // Checkout
-        double total = calculateTotal(date, t.getProductList());
-
-
-        t.setTotalPrice(total);
-        transServ.completePurchase(t);
-        System.out.printf("\nThe total for you transaction is $%3.2f.\n", total);
-        System.out.println("Purchase Complete!\n");
     }
 
     private double calculateTotal(LocalDate date, List<TransactionItem> cart) {

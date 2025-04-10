@@ -33,7 +33,7 @@ public class Staff extends DomainObject{
     @Column(name = "employmentTime", nullable = false)
     private int employmentTime;
   
-    private enum Title {
+    public enum Title {
         MANAGER, 
         REGISTRATION, 
         BILLING, 
@@ -41,7 +41,7 @@ public class Staff extends DomainObject{
 
         UNKNOWN;
 
-        private static Title fromString(String title) {
+        public static Title fromString(String title) {
             switch (title.toLowerCase()) {
                 case "manager":
                 case "assistant manager":

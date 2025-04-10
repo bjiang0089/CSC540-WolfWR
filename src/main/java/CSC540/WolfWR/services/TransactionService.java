@@ -141,7 +141,7 @@ public class TransactionService  extends  Services<Transaction, Long> {
     }
 
     public List<Staff> findCashier(Store s) {
-        return staffRepo.findCashier(s.getStoreID(), Staff.Title.BILLING.ordinal());
+        return staffRepo.findCashier(s.getStoreID(), Staff.Title.fromString("cashier").ordinal());
     }
     public List<Transaction> getHistoryByCustomer(Member m) {
         return repo.getHistoryByCustomer(m.getId());

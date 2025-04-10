@@ -69,11 +69,11 @@ public class ManagerView {
             switch (input.trim().toLowerCase()) {
                 case "0":
                     return;
-                case "case 1":
+                case "1":
                     // Make call to helper method
                     billing.generateBill(scan);
                     break;
-                case "case 2":
+                case "2":
                     billing.tabulateRewards(scan);
                     break;
                 case "3":
