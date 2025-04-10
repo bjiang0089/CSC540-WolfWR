@@ -32,12 +32,13 @@ public class Staff extends DomainObject{
 
     @Column(name = "employmentTime", nullable = false)
     private int employmentTime;
-    
+  
     private enum Title {
         MANAGER, 
         REGISTRATION, 
         BILLING, 
         WAREHOUSE, 
+
         UNKNOWN;
 
         private static Title fromString(String title) {
@@ -50,6 +51,9 @@ public class Staff extends DomainObject{
                     return BILLING;
                 case "warehouse checker":
                     return WAREHOUSE;
+
+                case "registration":
+                    return REGISTRATION;
                 default:
                     return UNKNOWN;
             }
@@ -68,7 +72,7 @@ public class Staff extends DomainObject{
                  String title,
                  String phone,
                  int employmentTime,
-                long staffID,
+                 long staffID,
                  Store store) {
         this.staffID = staffID;
         this.store = store;

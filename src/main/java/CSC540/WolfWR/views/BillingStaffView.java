@@ -1,20 +1,13 @@
 package CSC540.WolfWR.views;
 
 import CSC540.WolfWR.WolfWRApp;
-import CSC540.WolfWR.models.Member;
-import CSC540.WolfWR.models.Merchandise;
-import CSC540.WolfWR.models.Supplier;
-import CSC540.WolfWR.models.Transaction;
-import CSC540.WolfWR.services.MemberService;
-import CSC540.WolfWR.services.MerchandiseService;
-import CSC540.WolfWR.services.SupplierService;
-import CSC540.WolfWR.services.TransactionService;
+import CSC540.WolfWR.models.*;
+import CSC540.WolfWR.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
 
 @Component
@@ -32,17 +25,23 @@ public class BillingStaffView {
     @Autowired
     private SupplierService supplierServ;
 
+    @Autowired
+    private StoreService storeServ;
+
 
     public void view(Scanner scan) {
         String input = null;
         //BillingStaffView view = new BillingStaffView();
         while (true) {
 
-            System.out.println("Select an action with the number provided:\n>");
+            System.out.println("Select an action with the number provided:");
 
             System.out.println("[0] Return to Home Page");
             System.out.println("[1] Generate Bill for Supplier");
             System.out.println("[2] Calculate Membership Rewards");
+            System.out.println("[3] Generate Sales Report (day, month, year)");
+            System.out.println("[4] Generate Sales Report (start - end)");
+
             System.out.print("> ");
 
             input = scan.nextLine().trim();
@@ -59,11 +58,118 @@ public class BillingStaffView {
                 case "2":
                     tabulateRewards(scan);
                         break;
+                case "3":
+                    generateStoreSalesReport(scan);
+                    break;
+                case "4":
+                    generateBoundStoreSalesReport(scan);
+                    break;
                 default:
                     System.out.println("\nUnknown action\n");
             }
         }
 
+    }
+
+    public void generateBoundStoreSalesReport(Scanner scan) {
+        String input = null;
+        List<Store> locations = storeServ.findAll();
+
+        Store current = null;
+        System.out.println("\nPlease select a store:");
+        listLocations(locations);
+
+
+        try {
+            int idx = Integer.parseInt( scan.nextLine().trim() );
+            current = locations.get(idx - 1);
+        } catch (Exception e) {
+            System.out.println("Invalid Store\n");
+            return;
+        }
+
+        System.out.println("Please provide the *START* date for the report as mm-dd-yyyy:");
+        System.out.print("> ");
+        input = scan.nextLine().trim();
+        LocalDate start = null;
+        try {
+            start = LocalDate.parse(input, WolfWRApp.timeFormat);
+        } catch (Exception e) {
+            System.out.println("Unable to parse start date\n");
+            return;
+        }
+
+        System.out.println("Please provide the *END* date for the report as mm-dd-yyyy:");
+        System.out.print("> ");
+        input = scan.nextLine().trim();
+        LocalDate end = null;
+        try {
+            end = LocalDate.parse(input, WolfWRApp.timeFormat);
+        } catch (Exception e) {
+            System.out.println("Unable to parse start date\n");
+            return;
+        }
+
+        if (end.isBefore(start)) {
+            System.out.println("End date cannot be after the Start date.");
+            return;
+        }
+
+        transServ.generateBoundStoreSalesReport(start, end, current);
+    }
+
+    public void generateStoreSalesReport(Scanner scan) {
+
+        String input = null;
+        List<Store> locations = storeServ.findAll();
+
+        Store current = null;
+        System.out.println("\nPlease select a store:");
+        listLocations(locations);
+
+
+        try {
+            int idx = Integer.parseInt( scan.nextLine().trim() );
+            current = locations.get(idx - 1);
+        } catch (Exception e) {
+            System.out.println("Invalid Store\n");
+            return;
+        }
+
+        System.out.println("\nPlease select a time period for the report:");
+        System.out.println("[1] Day");
+        System.out.println("[2] Month");
+        System.out.println("[3] Year");
+        System.out.print("> ");
+
+        input = scan.nextLine().trim();
+        String timeframe = "";
+        switch (input) {
+            case "1":
+                timeframe = "day";
+                break;
+            case "2":
+                timeframe = "month";
+                break;
+            case "3":
+                timeframe = "year";
+                break;
+            default:
+                System.out.println("Invalid Input\n");
+                return;
+        }
+
+        System.out.println("Please provide the *START* date for the report as mm-dd-yyyy:");
+        System.out.print("> ");
+        input = scan.nextLine().trim();
+        LocalDate start = null;
+        try {
+            start = LocalDate.parse(input, WolfWRApp.timeFormat);
+        } catch (Exception e) {
+            System.out.println("Unable to parse start date\n");
+            return;
+        }
+        transServ.generateStoreSalesReport(timeframe, start, current);
     }
 
     public void generateBill(Scanner scan) {
@@ -186,4 +292,11 @@ public class BillingStaffView {
         System.out.print("> ");
     }
 
+    private void listLocations(List<Store> locs) {
+        for(int i = 0; i < locs.size(); i++) {
+            Store s = locs.get(i);
+            System.out.printf("[%d] %s\n", i + 1, s.getAddress());
+        }
+        System.out.print("> ");
+    }
 }
