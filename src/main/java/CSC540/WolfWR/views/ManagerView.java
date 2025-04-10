@@ -4,9 +4,20 @@ import org.springframework.stereotype.Component;
 
 import java.util.Scanner;
 
+/**
+ * The {@code ManagerView} class represents the manager's interface for interacting with various views in the application.
+ * This class allows the manager to perform different actions, such as generating bills and tabulating rewards for customers.
+ * It uses the {@link BillingStaffView}, {@link WarehouseView}, and {@link RegistrationView} classes for specific actions.
+ */
 @Component
 public class ManagerView {
 
+    /**
+     * Displays the manager's options and allows the manager to interact with different system functionalities.
+     * The manager can select different actions, such as generating a bill or tabulating rewards, or return to the previous page.
+     * 
+     * @param scan The {@link Scanner} object used to take user input.
+     */
     public static void view(Scanner scan) {
         String input = null;
         BillingStaffView billling = new BillingStaffView();
