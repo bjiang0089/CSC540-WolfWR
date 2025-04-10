@@ -213,7 +213,7 @@ public class WarehouseView {
 
     public void viewAllInventory(List<Merchandise> inventory, Scanner scan) {
         System.out.println();
-        if (inventory.size() == 0) {
+        if (selection == 1 && inventory.size() == 0) {
             System.out.println("You have no inventory to display...");
             return;
         } else {
@@ -230,7 +230,14 @@ public class WarehouseView {
     }
 
     public void processReturn(Store store, Scanner scan) {
+        System.out.println();
         List<Merchandise> inventory = merchServ.totalStoreInventory(store);
+        if (inventory.size() == 0) {
+            System.out.println();
+            System.out.println("You have no inventory to process returns into... Try adding a product first.");
+            return;
+        }
+        System.out.println();
         System.out.println("Select the merchandise being returned:");
         viewAllInventory(inventory, scan);
         System.out.print("> ");
@@ -238,6 +245,7 @@ public class WarehouseView {
         try {
             merch = inventory.get(Integer.parseInt(scan.nextLine().trim()));
         } catch (Exception e) {
+            System.out.println();
             System.out.println("Invalid Merchandise\n");
             return;
         }
