@@ -13,7 +13,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query(value = "SELECT memberid FROM members", nativeQuery = true)
     public List<Long> getIDs();
 
-    @Query(value = "SELECT * from members WHERE is_active = 0", nativeQuery = true)
+    @Query(value = "SELECT * from members WHERE is_active = 1", nativeQuery = true)
     public List<Member> getMembers();
 
 }
