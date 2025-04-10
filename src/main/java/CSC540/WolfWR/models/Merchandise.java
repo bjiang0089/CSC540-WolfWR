@@ -89,7 +89,7 @@ public class Merchandise extends DomainObject {
         return buyPrice;
     }
 
-    public void setBuyPrice(float buyPrice) {
+    public void setBuyPrice(double buyPrice) {
         this.buyPrice = buyPrice;
     }
 
@@ -97,7 +97,7 @@ public class Merchandise extends DomainObject {
         return marketPrice;
     }
 
-    public void setMarketPrice(float marketPrice) {
+    public void setMarketPrice(double marketPrice) {
         this.marketPrice = marketPrice;
     }
 
@@ -133,9 +133,9 @@ public class Merchandise extends DomainObject {
         this.store = store;
     }
 
-    public void toString() {
-        System.out.printf("Product ID: %d, Name: %s, Quantity: %d, Buy Price: %f, MarketPrice: %f, Production Date: %s, Expiration Date: %s, Supplier Name: %s, Store ID: %d\n",
-                                this.getProductID(), this.getName(), this.getQuantity(), this.getBuyPrice(), this.getMarketPrice(), this.getProductionDate().toString(), 
-                                this.getExpirationDate().toString(), this.getSupplier().getName(), this.getStore().getStoreID());
+    public String toString() {
+        return String.format("Product ID: %d, Name: %s, Quantity: %d, Buy Price: %f, MarketPrice: %f, Production Date: %s, Expiration Date: %s, Supplier Name: %s, Store ID: %d\n",
+                this.getProductID(), this.getProductName(), this.getQuantity(), this.getBuyPrice(), this.getMarketPrice(), this.getProductionDate().toString(),
+                this.getExpirationDate().toString(), this.getSupplier().getSupplierName(), this.getStore().getStoreID());
     }
 }
