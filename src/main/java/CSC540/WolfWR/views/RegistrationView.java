@@ -42,6 +42,7 @@ public class RegistrationView {
 
         switch (input.trim()) {
             case "0":
+                System.out.println();
                 return;
             case "1":
                 registerMember(scan);
@@ -51,13 +52,16 @@ public class RegistrationView {
                 break;
             case "3":
                 listMembers(scan);
+                System.out.println();
                 break;
             default:
                 System.out.println("\nUnknown action\n");
+                System.out.println();
         }
     }
 
     public void registerMember(Scanner scan) {
+        System.out.println();
         long id = memberServ.generateID();
         String first = "";
         String last = "";
@@ -122,24 +126,35 @@ public class RegistrationView {
 
     public void cancelMembership(Scanner scan) {
         System.out.println();
+        List<Member> members = memberServ.viewMembers();
+        System.out.println();
         System.out.println("Select the member whose membership shall be cancelled:");
-        listMembers(scan);
+        System.out.println();
+        int idx = 0;
+        for (Member member : members) {
+            System.out.printf("[%d] Member ID: %d, First Name: %s, Last Name: %s\n", idx, member.getId(), member.getFirstName(), member.getLastName());
+            idx++;
+        }
         System.out.print("> ");
         Member member = null;
         try {
-            member = memberServ.viewMembers().get(Integer.parseInt(scan.nextLine().trim()));
+            member = members.get(Integer.parseInt(scan.nextLine().trim()));
         } catch (Exception e) {
             System.out.println("Invalid Member\n");
             return;
         }
         member.setActive(false);
         memberServ.save(member);
+        System.out.println();
         System.out.println("Success!\n");
     }
 
     public void listMembers(Scanner scan) {
+        System.out.println();
         int idx = 0;
-        for (Member member : memberServ.viewMembers()) {
+        List<Member> members = memberServ.viewMembers();
+        System.out.println();
+        for (Member member : members) {
             System.out.printf("[%d] Member ID: %d, First Name: %s, Last Name: %s\n", idx, member.getId(), member.getFirstName(), member.getLastName());
             idx++;
         }
