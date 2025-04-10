@@ -18,4 +18,8 @@ public class StaffService  extends Services<Staff, Long> {
     protected JpaRepository<Staff, Long> getRepo() {
         return this.repo;
     }
+
+    public long generateID() {
+        return repo.getID() + 1;
+    }
 }

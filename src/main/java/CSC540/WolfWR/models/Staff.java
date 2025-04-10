@@ -50,6 +50,8 @@ public class Staff extends DomainObject{
                     return BILLING;
                 case "warehouse checker":
                     return WAREHOUSE;
+                case "registration":
+                    return REGISTRATION;
                 default:
                     return UNKNOWN;
             }
