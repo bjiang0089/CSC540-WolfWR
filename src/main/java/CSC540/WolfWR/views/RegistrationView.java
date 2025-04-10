@@ -139,7 +139,7 @@ public class RegistrationView {
             return;
         }
         member.setActive(false);
-        member.save(member);
+        memberServ.save(member);
         System.out.println("Success!\n");
     }
 
