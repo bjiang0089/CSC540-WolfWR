@@ -5,33 +5,53 @@ import CSC540.WolfWR.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Component responsible for populating the database with initial sample data.
+ * <p>
+ * The {@code DataLoader} is used primarily for development and testing purposes
+ * to seed the database with members, stores, staff, merchandise, suppliers,
+ * discounts, sign-ups, and transactions.
+ */
 @Component
 public class DataLoader {
 
+    /** Service for managing discounts on merchandise. */
     @Autowired
     private DiscountService discountServ;
 
+    /** Service for managing member data and operations. */
     @Autowired
     private  MemberService memberServ;
 
+    /** Service for managing merchandise inventory and details. */
     @Autowired
     private  MerchandiseService merchServ;
 
+    /** Service for handling member sign-ups to stores. */
     @Autowired
     private  SignUpService signUpServ;
 
+    /** Service for managing staff records and roles. */
     @Autowired
     private  StaffService staffServ;
 
+    /** Service for managing store information and relationships. */
     @Autowired
     private  StoreService storeServ;
 
+    /** Service for managing supplier information and associations. */
     @Autowired
     private  SupplierService supplierServ;
 
+    /** Service for handling transactions between members and stores. */
     @Autowired
     private  TransactionService transServ;
 
+    /**
+     * Entry point for loading all demo data into the database.
+     * This method invokes all the internal loading methods in order,
+     * respecting dependencies (e.g., suppliers before merchandise).
+     */
     public void loadData() {
         loadStore();
         // set Manager for store 1001 after Staff are created handled in loadStaff()
@@ -49,6 +69,9 @@ public class DataLoader {
 
     }
 
+    /**
+     * Populates the database with sample {@link Member} records.
+     */
     private  void loadMembers() {
         Member m = new Member(501L, "John", "Doe", "Gold", "john.doe@gmail.com",
                 "9194285314", "12 Elm St, Raleigh, NC 27607", true);
@@ -78,6 +101,9 @@ public class DataLoader {
 
     }
 
+    /**
+     * Adds two sample {@link Store} records to the system.
+     */
     private  void loadStore () {
         Store store = new Store(1001L, "9194789125",
                 "1021 Main Campus Dr, Raleigh, NC, 27606", null);
@@ -88,6 +114,10 @@ public class DataLoader {
         storeServ.save(store);
     }
 
+    /**
+     * Adds multiple {@link Staff} members and assigns one as the manager
+     * of a store. Covers both stores.
+     */
     private  void loadStaff() {
         Store store1 = storeServ.findByID( 1001L );
         Store store2 = storeServ.findByID( 1002L );
@@ -189,6 +219,10 @@ public class DataLoader {
 
     }
 
+    /**
+     * Loads a set of {@link Merchandise} items and associates them
+     * with stores and suppliers.
+     */
     private  void loadMerchandise() {
         Store store1 = storeServ.findByID( 1001L );
         Store store2 = storeServ.findByID( 1002L );
@@ -229,6 +263,9 @@ public class DataLoader {
         merchServ.save(m);
     }
 
+    /**
+     * Populates the database with member sign-up data for stores.
+     */
     private  void loadSignUp(){
         Store store1 = storeServ.findByID(1001L);
         Store store2 = storeServ.findByID(1002L);
@@ -261,6 +298,9 @@ public class DataLoader {
         signUpServ.save(s);
     }
 
+    /**
+     * Populates the database with sample {@link Transaction} records.
+     */
     private  void loadTransaction(){
         Merchandise apples = merchServ.findByID(301L);
         Merchandise bread = merchServ.findByID(302L);
@@ -302,6 +342,9 @@ public class DataLoader {
         transServ.save(t);
     }
 
+    /**
+     * Populates the database with sample {@link Supplier} records.
+     */
     private  void loadSupplier(){
         Supplier s = new Supplier( 401, "Fresh Farms Ltd.", "9194248251",
                 "contact@freshfarm.com", "123 Greenway Blvd, Raleigh, NC 27615");
@@ -312,6 +355,9 @@ public class DataLoader {
         supplierServ.save(s);
     }
 
+    /**
+     * Populates the database with sample {@link Discount} records for merchandise.
+     */
     private  void loadDiscount(){
         Merchandise m = merchServ.findByID(306L);
         Discount d = new Discount(m, 10, "04-10-2024", "05-10-2024");
