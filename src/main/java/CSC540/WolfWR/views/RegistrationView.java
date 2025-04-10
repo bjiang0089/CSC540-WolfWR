@@ -54,6 +54,7 @@ public class RegistrationView {
                 break;
             default:
                 System.out.println("\nUnknown action\n");
+                System.out.println();
         }
     }
 
@@ -123,20 +124,27 @@ public class RegistrationView {
     public void cancelMembership(Scanner scan) {
         System.out.println();
         System.out.println("Select the member whose membership shall be cancelled:");
-        listMembers(scan);
+        List<Member> members = memberServ.viewMembers();
+        int idx = 0;
+        for (Member member : members) {
+            System.out.printf("[%d] Member ID: %d, First Name: %s, Last Name: %s\n", idx, member.getId(), member.getFirstName(), member.getLastName());
+            idx++;
+        }
         System.out.print("> ");
         Member member = null;
         try {
-            member = memberServ.viewMembers().get(Integer.parseInt(scan.nextLine().trim()));
+            member = members.get(Integer.parseInt(scan.nextLine().trim()));
         } catch (Exception e) {
             System.out.println("Invalid Member\n");
             return;
         }
         member.setActive(false);
+        member.save(member);
         System.out.println("Success!\n");
     }
 
     public void listMembers(Scanner scan) {
+        System.out.println();
         int idx = 0;
         for (Member member : memberServ.viewMembers()) {
             System.out.printf("[%d] Member ID: %d, First Name: %s, Last Name: %s\n", idx, member.getId(), member.getFirstName(), member.getLastName());
