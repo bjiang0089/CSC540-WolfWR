@@ -1,5 +1,3 @@
-can you provide me with javadoc for this java code:
-
 package CSC540.WolfWR.models;
 
 /**
