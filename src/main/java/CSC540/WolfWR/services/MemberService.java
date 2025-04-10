@@ -8,6 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.List;
+
+
 /**
  * Service class for managing {@link Member} entities.
  * <p>
@@ -45,5 +49,14 @@ public class MemberService extends Services<Member, Long> {
     @Override
     protected JpaRepository<Member, Long> getRepo() {
         return this.repo;
+    }
+
+    public long generateID() {
+        List<Long> ids = repo.getIDs();
+        return Collections.max(ids) + 1;
+    }
+
+    public List<Member> viewMembers() {
+        return repo.getMembers();
     }
 }

@@ -155,6 +155,7 @@ public class Merchandise extends DomainObject {
         return buyPrice;
     }
 
+
     /**
      * Sets the price the store pays to the supplier for each unit.
      * 
@@ -172,6 +173,7 @@ public class Merchandise extends DomainObject {
     public double getMarketPrice() {
         return marketPrice;
     }
+
 
     /**
      * Sets the price customers pay for each unit in the store.

@@ -50,6 +50,7 @@ public class Staff extends DomainObject{
     @Column(name = "employmentTime", nullable = false)
     private int employmentTime;
 
+
     /**
      * Enum representing the various job titles that a staff member can have.
      * <p>
@@ -58,12 +59,14 @@ public class Staff extends DomainObject{
      * </p>
      */
     public enum Title {
-        MANAGER,
-        REGISTRATION,
-        BILLING,
-        WAREHOUSE,
+        MANAGER, 
+        REGISTRATION, 
+        BILLING, 
+        WAREHOUSE, 
+
         UNKNOWN;
 
+        public static Title fromString(String title) {
         /**
          * Converts a string to a corresponding {@link Title} enum.
          * 
@@ -80,6 +83,9 @@ public class Staff extends DomainObject{
                     return BILLING;
                 case "warehouse checker":
                     return WAREHOUSE;
+
+                case "registration":
+                    return REGISTRATION;
                 default:
                     return UNKNOWN;
             }

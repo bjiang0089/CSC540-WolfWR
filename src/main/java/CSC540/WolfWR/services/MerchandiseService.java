@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * Service class for managing {@link Merchandise} entities.
@@ -79,5 +80,10 @@ public class MerchandiseService extends Services<Merchandise, Long> {
      */
     public List<Merchandise> storeInventory(Store s) {
         return this.repo.storeInventory(s.getStoreID());
+    }
+
+    public long generateID() {
+        List<Long> ids = repo.getIDs();
+        return Collections.max(ids) + 1;
     }
 }
