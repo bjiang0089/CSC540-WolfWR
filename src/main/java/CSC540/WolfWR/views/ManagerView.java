@@ -9,10 +9,12 @@ import CSC540.WolfWR.services.StoreService;
 import ch.qos.logback.core.encoder.EchoEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Scanner;
 
+@Transactional
 @Component
 public class ManagerView {
 
@@ -52,6 +54,7 @@ public class ManagerView {
             System.out.println("[4] Generate Sales Report (start - end)");
             System.out.println("[5] View History");
             System.out.println("[6] Hire New Staff");
+            System.out.println("[7] Fire Staff");
 
             System.out.print("> ");
             input = scan.nextLine().trim();
@@ -85,6 +88,9 @@ public class ManagerView {
                     break;
                 case "6":
                     hireNewStaff(scan);
+                    break;
+                case "7":
+                    fireStaff(scan);
                     break;
                 default:
                     System.out.println("\nUnknown action\n");
@@ -163,7 +169,28 @@ public class ManagerView {
     }
 
     public void fireStaff(Scanner scan) {
+        System.out.println("\nSelect a store:");
+        System.out.print("> ");
+        Store store = selectStore(scan);
+        List<Staff> staff = staffService.findAllByStore(store);
 
+        System.out.println("Select a staff member:");
+        System.out.print("> ");
+        Staff s = null;
+        for (int i = 0; i < staff.size(); i++) {
+            s = staff.get(i);
+            System.out.printf("[%d] %s \n", i + 1, s.getName());
+        }
+
+        String input = scan.nextLine().trim();
+        try {
+            int idx = Integer.parseInt(input) - 1;
+            s = staff.get(idx);
+            staffService.delete(s);
+            System.out.println("Staff member removed\n");
+        } catch ( Exception e ) {
+            System.out.println("Invalid staff member\n");
+        }
     }
 
     public Store selectStore(Scanner scan) {
