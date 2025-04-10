@@ -119,7 +119,8 @@ public class WarehouseView {
             return;
         }
         if (myStore.getStoreID() == theirStore.getStoreID()) {
-            System.out.println("Sender and recipient cannot be the same.");
+            System.out.println();
+            System.out.println("Sender and Recipient Cannot be the Same...");
             return;
         }
         System.out.println();
