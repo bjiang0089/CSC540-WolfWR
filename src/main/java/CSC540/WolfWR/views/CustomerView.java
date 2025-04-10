@@ -240,6 +240,7 @@ public class CustomerView {
             conn.rollback();
             throw e;
         }
+        conn.setAutoCommit(true);
     }
 
 
