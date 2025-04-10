@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"CSC540.WolfWR"},{"l":"CSC540.WolfWR.models"},{"l":"CSC540.WolfWR.repositories"},{"l":"CSC540.WolfWR.services"},{"l":"CSC540.WolfWR.views"}];updateSearchResults();

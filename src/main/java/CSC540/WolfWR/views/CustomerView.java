@@ -15,28 +15,58 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * The {@code CustomerView} class provides the customer interface for interacting with the store.
+ * This includes viewing and selecting a member, making a purchase, selecting stores, and adding merchandise to the cart.
+ * The customer can also proceed to checkout and complete their purchase.
+ * <p>
+ * This class uses services such as {@link StoreService}, {@link MerchandiseService}, {@link TransactionService},
+ * and {@link MemberService} to interact with the business logic and persist data.
+ * </p>
+ */
 @Transactional
 @Component
 public class CustomerView {
 
+    /**
+     * The service used for performing operations on {@link Store} entities.
+     */
     @Autowired
     private DataSource source;
 
     @Autowired
     private StoreService storeServ;
 
+    /**
+     * The service used for performing operations on {@link Merchandise} entities.
+     */
     @Autowired
     private MerchandiseService merchServ;
 
+    /**
+     * The service used for performing operations on {@link Transaction} entities.
+     */
     @Autowired
     private TransactionService transServ;
 
+    /**
+     * The service used for performing operations on {@link Member} entities.
+     */
     @Autowired
     private MemberService memberServ;
+
 
     @Autowired
     private DiscountService discountServ;
 
+
+
+    /**
+     * Displays the customer view, prompting the user to sign in by selecting their account and then presenting options 
+     * to make a purchase or return to the home page.
+     * 
+     * @param scan The {@link Scanner} object used to take user input.
+     */
 
     public void view(Scanner scan) {
         List<Member> members = memberServ.findAll();
@@ -98,6 +128,22 @@ public class CustomerView {
         System.out.printf("You've made %3d purchases with a total of $%4.2f\n\n",
                 count, total);
     }
+
+    /**
+     * Allows a customer to make a purchase by selecting a store, adding merchandise to the cart, and proceeding to checkout.
+     * The purchase is then completed with the total price calculated and the transaction saved.
+     * 
+     * @param scan The {@link Scanner} object used to take user input.
+     * @param active The active {@link Member} making the purchase.
+     */
+    @Transactional
+    public void makePurchase(Scanner scan, Member active) {
+        // Store Selection
+        Store current = null;
+        List<Store> locations = storeServ.findAll();
+        System.out.println("\nPlease select a store:");
+        listLocations(locations);
+
 
     @Transactional
     public void makePurchase(Scanner scan, Member active) throws SQLException {
@@ -196,7 +242,16 @@ public class CustomerView {
         }
     }
 
+
     private double calculateTotal(LocalDate date, List<TransactionItem> cart) {
+
+    /**
+     * Calculates the total price of the items in the shopping cart.
+     * 
+     * @param cart The list of {@link TransactionItem} in the cart.
+     * @return The total price of the items in the cart.
+     */
+    private double calculateTotal(List<TransactionItem> cart) {
         double total = 0;
         double price = 0;
 
@@ -214,6 +269,11 @@ public class CustomerView {
         return total;
     }
 
+    /**
+     * Displays the list of stores available for selection with an index.
+     * 
+     * @param locs The list of {@link Store} locations to display.
+     */
     private void listLocations(List<Store> locs) {
         for(int i = 0; i < locs.size(); i++) {
             Store s = locs.get(i);
@@ -222,6 +282,11 @@ public class CustomerView {
         System.out.print("> ");
     }
 
+    /**
+     * Displays the available merchandise in a store's inventory with an index.
+     * 
+     * @param merch The list of {@link Merchandise} available for purchase.
+     */
     private void listInventory(List<Merchandise> merch) {
 
         System.out.println("[-1] Cancel Transaction");
@@ -233,6 +298,11 @@ public class CustomerView {
         System.out.print("> ");
     }
 
+    /**
+     * Displays the list of members with an index for selection.
+     * 
+     * @param members The list of {@link Member} entities to display.
+     */
     private void displayMembers(List<Member> members) {
         for (int i = 0; i < members.size(); i++) {
             Member m = members.get(i);
@@ -241,8 +311,18 @@ public class CustomerView {
         System.out.print("> ");
     }
 
+
     @Transactional
     public Transaction getNewTransaction(Store s, Member m, LocalDate date) {
+
+    /**
+     * Creates a new transaction for the active member at the selected store.
+     * 
+     * @param s The {@link Store} where the transaction is taking place.
+     * @param m The {@link Member} making the transaction.
+     * @return The created {@link Transaction} object, or null if no cashiers are available.
+     */
+    public Transaction getNewTransaction(Store s, Member m) {
         Transaction t = new Transaction();
         t.setTransactionID( transServ.generateID() );
         t.setStore(s);

@@ -7,6 +7,20 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repository interface for accessing {@link Store} entities from the database.
+ * <p>
+ * This interface extends {@link JpaRepository}, providing methods for performing CRUD (Create, Read, Update, Delete)
+ * operations on {@link Store} entities. It facilitates interactions with the data layer for managing store information.
+ * </p>
+ * 
+ * <p>
+ * This repository is used for managing the data associated with stores, including details like store ID, address,
+ * contact information, and the store manager.
+ * </p>
+ * 
+ * @see Store
+ */
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Long> {
 

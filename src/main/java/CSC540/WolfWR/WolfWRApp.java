@@ -12,40 +12,69 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Main application class for Wolf Wholesale Retail (WolfWR) system.
+ * Acts as the command-line interface entry point for interacting with different roles in the system.
+ * 
+ * <p>This class is responsible for launching the Spring Boot application and presenting
+ * a text-based menu to the user for selecting their role and accessing corresponding views.</p>
+ * 
+ * Implements {@link CommandLineRunner} to run initialization logic after the application context is loaded.
+ */
 @SpringBootApplication
 public class WolfWRApp  implements CommandLineRunner{
 
-
+    /** Loads initial data into the database. */
     @Autowired
     private DataLoader loader;
 
+    /** View interface for billing staff operations. */
     @Autowired
     private BillingStaffView billing;
 
+    /** View interface for registration staff operations. */
     @Autowired
     private RegistrationView registration;
 
+    /** View interface for warehouse staff operations. */
     @Autowired
     private WarehouseView warehouse;
 
+    /** View interface for manager operations. */
     @Autowired
     private ManagerView manager;
 
+    /** View interface for customer operations. */
     @Autowired
     private CustomerView customer;
 
+    /** View interface for global/corporate level operations. */
     @Autowired
     private GlobalView global;
 
+    /** Service for managing member-related operations. */
     @Autowired
     private MemberService memberServ;
 
+    /** Formatter for displaying dates in MM-dd-yyyy format. */
     public static DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("MM-dd-yyyy");
 
+    /**
+     * The main method that starts the Spring Boot application.
+     *
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         SpringApplication.run(WolfWRApp.class, args);
     }
 
+    /**
+     * Executes after the application has started. 
+     * Displays a role selection menu and routes the user to the corresponding view.
+     *
+     * @param args application arguments
+     * @throws Exception in case of input/output or other runtime errors
+     */
     @Override
     public void run(String... args) throws Exception {
         Scanner scan = new Scanner(System.in);
@@ -109,6 +138,10 @@ public class WolfWRApp  implements CommandLineRunner{
         scan.close();
     }
 
+    /**
+     * Helper method to display a selection of all customers (members).
+     * Currently prints an index for each member found in the system.
+     */
     private void customerSelection() {
         List<Member> members = memberServ.findAll();
         for (int i = 0; i < members.size(); i++) {

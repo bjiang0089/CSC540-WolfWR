@@ -16,11 +16,20 @@ import java.util.Scanner;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * The {@code WarehouseView} class represents the view for managing warehouse operations such as transferring inventory
+ * and viewing the entire inventory.
+ * This class interacts with the user through the {@link Scanner} to facilitate inventory management.
+ */
 @Component
 public class WarehouseView {
 
+    /**
+     * The service used for performing operations on {@link MerchandiseService} entities.
+     */
     @Autowired
     private MerchandiseService merchServ;
+
 
     @Autowired
     private StoreService storeServ;
@@ -30,6 +39,14 @@ public class WarehouseView {
 
     @Autowired
     private SupplierService supplServ;
+
+
+    /**
+     * Displays the warehouse management interface to the user.
+     * This method provides options for warehouse staff to manage the inventory and transfer items between stores.
+     * 
+     * @param scan The {@link Scanner} object used to take user input for various warehouse operations.
+     */
 
     public void view(Scanner scan) {
         String input = null;
@@ -86,6 +103,7 @@ public class WarehouseView {
         }
         System.out.print("> ");
     }
+
 
     public void transferInventory(Store myStore, Scanner scan) {
         List<Store> stores = storeServ.findAll();
@@ -169,6 +187,15 @@ public class WarehouseView {
         }
     } 
 
+    /**
+     * Facilitates the process of transferring inventory between stores.
+     * This method is responsible for interacting with the user to handle the inventory transfer operation.
+     * 
+     * @param scan The {@link Scanner} object used to gather user input for transferring inventory.
+     */
+    public void transferInventory(Scanner scan) {
+
+
     public void viewAllInventory(List<Merchandise> inventory, Scanner scan) {
         int idx = 0;
         for (Merchandise merch : inventory) {
@@ -176,6 +203,7 @@ public class WarehouseView {
             idx++;
         }
     }
+
 
     public void processReturn(Store store, Scanner scan) {
         System.out.println("Select the merchandise being returned:");
@@ -296,6 +324,15 @@ public class WarehouseView {
                 System.out.println("Invalid Supplier\n");
                 return;
             }
+
+    /**
+     * Displays all merchandise available in the inventory.
+     * This method allows the user to view the entire inventory in the warehouse, including details of each product.
+     * 
+     * @param scan The {@link Scanner} object used to take user input for viewing inventory.
+     */
+    public void viewAllInventory(Scanner scan) {
+
 
             Merchandise merch = new Merchandise();
             merch.setProductID(productID);
