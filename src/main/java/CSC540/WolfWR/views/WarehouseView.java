@@ -31,6 +31,8 @@ public class WarehouseView {
     @Autowired
     private SupplierService supplServ;
 
+    private int selection;
+
     public void view(Scanner scan) {
         String input = null;
 
@@ -46,8 +48,18 @@ public class WarehouseView {
         input = scan.nextLine().trim();
 
         if (input.equals("0")) {
-            System.out.println();
             return;
+        } else {
+            try {
+                int inputVal = Integer.parseInt(input);
+                if (inputVal < 0 || inputVal > 4) {
+                    System.out.println("\nInvalid Entry.");
+                    return;
+                }
+            } catch (Exception e) {
+                System.out.println("\nInvalid Entry.");
+                return;
+            }
         }
 
         System.out.println();
@@ -59,28 +71,29 @@ public class WarehouseView {
         try {
             myStore = stores.get(Integer.parseInt(scan.nextLine().trim()));
         } catch (Exception e) {
-            System.out.println("Invalid Store\n");
+            System.out.println("\nInvalid Store.");
             return;
         }
         switch (input.trim()) {
             case "1":
+                selection = 1;
                 List<Merchandise> inventory = merchServ.storeInventory(myStore);
                 viewAllInventory(inventory, scan);
-                System.out.println();
-                System.out.println("Success!");
-                System.out.println();
                 break;
             case "2":
+                selection = 2;
                 transferInventory(myStore, scan);
                 break;
             case "3":
+                selection = 3;
                 processReturn(myStore, scan);
                 break;
             case "4":
+                selection = 4;
                 stockMerchandise(myStore, scan);
                 break;
             default:
-                System.out.println("\nUnknown action\n");
+                System.out.println("\nUnknown Action.");
         }
     }
 
@@ -102,16 +115,22 @@ public class WarehouseView {
         try {
             theirStore = stores.get(Integer.parseInt(scan.nextLine().trim()));
         } catch (Exception e) {
-            System.out.println("Invalid Store\n");
+            System.out.println("Invalid Store");
             return;
         }
         if (myStore.getStoreID() == theirStore.getStoreID()) {
             System.out.println("Sender and recipient cannot be the same.");
             return;
         }
+        System.out.println();
         List<Merchandise> myInventory = merchServ.storeInventory(myStore);
         List<Merchandise> otherInventory = merchServ.storeInventory(theirStore);
 
+        if (myInventory.size() == 0) {
+            System.out.println();
+            System.out.println("You have no inventory to transfer...");
+            return;
+        }
         System.out.println();
         System.out.println("Select the merchandise to transfer:");
         viewAllInventory(myInventory, scan);
@@ -122,7 +141,8 @@ public class WarehouseView {
         try {
             myMerch = myInventory.get(Integer.parseInt(scan.nextLine().trim()));
         } catch (Exception e) {
-            System.out.println("Invalid Merchandise\n");
+            System.out.println();
+            System.out.println("Invalid Merchandise");
             return;
         }
         for (Merchandise merch : otherInventory) {
@@ -137,33 +157,34 @@ public class WarehouseView {
         try {
             transferAmt = Integer.parseInt(scan.nextLine().trim());
         } catch (Exception e) {
-            System.out.println("Invalid Quantity\n");
+            System.out.println("Invalid Quantity");
+            return;
+        }
+        if (transferAmt <= 0) {
+            if (transferAmt == 0) {
+                System.out.println();
+                System.out.println("Cannot Transfer 0 Units of Merchandise...");
+                return;
+            } else {
+                System.out.println();
+                System.out.println("Transfer Quantity Cannot be Negative...");
+                return;
+            }
+        } else if (myMerch.getQuantity() - transferAmt < 0) {
+            System.out.println();
+            System.out.println("Insufficient Amount of Merchandise to Transfer...");
             return;
         }
         if (null != theirMerch) {
-            if (transferAmt == 0) {
-                System.out.println("Cannot Transfer 0 Units of Merchandise\n");
-                return;
-            } else if (myMerch.getQuantity() - transferAmt < 0) {
-                System.out.println("Insufficient Amount of Merchandise to Transfer\n");
-                return;
-            } else {
-                myMerch.setQuantity(myMerch.getQuantity() - transferAmt);
-                theirMerch.setQuantity(theirMerch.getQuantity() + transferAmt);
-                System.out.println();
-                System.out.println("Success!\n");
-            }
+            myMerch.setQuantity(myMerch.getQuantity() - transferAmt);
+            theirMerch.setQuantity(theirMerch.getQuantity() + transferAmt);
+            merchServ.save(myMerch);
+            merchServ.save(theirMerch);
+            System.out.println();
+            System.out.println("Success!");
         } else {
-            if (transferAmt == 0) {
-                System.out.println("Cannot Transfer 0 Units of Merchandise\n");
-                return;
-            } else if (myMerch.getQuantity() - transferAmt < 0) {
-                System.out.println("Insufficient Amount of Merchandise to Transfer\n");
-                return;
-            }
             long newId = merchServ.generateID();
             String name = myMerch.getProductName();
-            int quantity = transferAmt;
             double buy = myMerch.getBuyPrice();
             double market = myMerch.getMarketPrice();
             LocalDate prod = myMerch.getProductionDate();
@@ -173,7 +194,7 @@ public class WarehouseView {
             theirMerch = new Merchandise();
             theirMerch.setProductID(newId);
             theirMerch.setProductName(name);
-            theirMerch.setQuantity(quantity);
+            theirMerch.setQuantity(transferAmt);
             theirMerch.setBuyPrice(buy);
             theirMerch.setMarketPrice(market);
             theirMerch.setProductionDate(prod);
@@ -181,9 +202,11 @@ public class WarehouseView {
             theirMerch.setSupplier(supplier);
             theirMerch.setStore(theirStore);
 
+            myMerch.setQuantity(myMerch.getQuantity() - transferAmt);
             merchServ.save(theirMerch);
+            merchServ.save(myMerch);
             System.out.println();
-            System.out.println("Success!\n");
+            System.out.println("Success!");
         }
     } 
 
@@ -191,17 +214,22 @@ public class WarehouseView {
         System.out.println();
         if (inventory.size() == 0) {
             System.out.println("You have no inventory to display...");
+            return;
         } else {
             int idx = 0;
             for (Merchandise merch : inventory) {
                 System.out.printf("[%d] %s", idx, merch.toString());
                 idx++;
             }
+            if (selection == 1) {
+                System.out.println();
+                System.out.println("Success!");
+            }
         }
     }
 
     public void processReturn(Store store, Scanner scan) {
-        List<Merchandise> inventory = merchServ.storeInventory(store);
+        List<Merchandise> inventory = merchServ.totalStoreInventory(store);
         System.out.println("Select the merchandise being returned:");
         viewAllInventory(inventory, scan);
         System.out.print("> ");
@@ -222,9 +250,20 @@ public class WarehouseView {
             System.out.println("Invalid Quantity\n");
             return;
         }
+        if (amt <= 0) {
+            System.out.println();
+            if (amt == 0) {
+                System.out.println("Return quantity cannot be zero...");
+            } else {
+                System.out.println("Return quantity cannot be negative...");
+            }
+            System.out.println();
+            return;
+        }
         merch.setQuantity(merch.getQuantity() + amt);
+        merchServ.save(merch);
         System.out.println();
-        System.out.println("Success!\n");
+        System.out.println("Success!");
     }
 
     public void stockMerchandise(Store store, Scanner scan) {
@@ -246,16 +285,25 @@ public class WarehouseView {
             if (choice == 0) {
                 addMerchandise(store, scan);
             } else {
+                System.out.println();
                 List<Merchandise> inventory = merchServ.totalStoreInventory(store);
+                if (inventory.size() == 0) {
+                    System.out.println();
+                    System.out.println("Inventory is empty... Add a new item instead.");
+                    return;
+                }
+                System.out.println();
+                System.out.println("Select the merchandise to add:");
                 viewAllInventory(inventory, scan);
                 System.out.print("> ");
                 Merchandise merch = null;
                 try {
                     merch = inventory.get(Integer.parseInt(scan.nextLine().trim()));
                 } catch (Exception e) {
-                    System.out.println("Invalid Merchandise\n");
+                    System.out.println("Invalid Merchandise");
                     return;
                 }
+                System.out.println();
                 System.out.println("Enter the quantity of the item to be added:");
                 System.out.print("> ");
                 int add = 0;
@@ -270,7 +318,9 @@ public class WarehouseView {
                     return;
                 }
                 merch.setQuantity(merch.getQuantity() + add);
-                System.out.println("Success!\n");
+                merchServ.save(merch);
+                System.out.println();
+                System.out.println("Success!");
             }   
         }
     }
@@ -287,6 +337,7 @@ public class WarehouseView {
         LocalDate exp = null;
         Supplier supplier = null;
         try {
+            System.out.println();
             System.out.print("Please enter the name of the product being added: ");
             name = scan.nextLine().trim();
             System.out.println();
@@ -299,16 +350,17 @@ public class WarehouseView {
             System.out.print("Please enter the market price of the product: ");
             market = Double.parseDouble(scan.nextLine().trim());
             System.out.println();
-            System.out.print("Please enter the production date of the product: ");
+            System.out.print("Please enter the production date of the product using the MM-dd-yyyy format: ");
             pdString = scan.nextLine().trim();
             prod = LocalDate.parse(pdString, WolfWRApp.timeFormat);
             System.out.println();
-            System.out.print("Please enter the expiration date of the product: ");
+            System.out.print("Please enter the expiration date of the product using the MM-dd-yyyy format: ");
             edString = scan.nextLine().trim();
             exp = LocalDate.parse(edString, WolfWRApp.timeFormat);
-
-            System.out.println("Select the supplier from the following list:\n");
+            System.out.println();
             List<Supplier> suppliers = supplServ.findAll();
+            System.out.println();
+            System.out.println("Select the supplier from the following list:\n");
             int idx = 0;
             for (Supplier suppl : suppliers) {
                 System.out.printf("[%d] Supplier Name: %s, Supplier ID: %d\n", idx, suppl.getSupplierName(), suppl.getSupplierID());
@@ -337,6 +389,7 @@ public class WarehouseView {
             System.out.println("Invalid Merchandise\n");
             return;
         }
-        System.out.println("Success!\n");
+        System.out.println();
+        System.out.println("Success!");
     }
 }
