@@ -89,7 +89,7 @@ public class Merchandise extends DomainObject {
         return buyPrice;
     }
 
-    public void setBuyPrice(float buyPrice) {
+    public void setBuyPrice(double buyPrice) {
         this.buyPrice = buyPrice;
     }
 
@@ -97,7 +97,7 @@ public class Merchandise extends DomainObject {
         return marketPrice;
     }
 
-    public void setMarketPrice(float marketPrice) {
+    public void setMarketPrice(double marketPrice) {
         this.marketPrice = marketPrice;
     }
 

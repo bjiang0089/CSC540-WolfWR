@@ -19,4 +19,7 @@ public interface MerchandiseRepository extends JpaRepository<Merchandise, Long> 
 
     @Query(value = "SELECT * FROM merchandise WHERE storeID = :store AND quantity > 0", nativeQuery = true)
     public List<Merchandise> storeInventory(@Param("store") Long storeID);
+
+    @Query(value = "SELECT productid FROM merchandise", nativeQuery = true)
+    public List<Long> getIDs();
 }
