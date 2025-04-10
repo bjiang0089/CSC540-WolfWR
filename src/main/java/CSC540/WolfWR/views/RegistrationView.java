@@ -53,11 +53,11 @@ public class RegistrationView {
             case "3":
                 listMembers(scan);
                 System.out.println();
+                System.out.println("Success!");
                 break;
             default:
-                System.out.println("\nUnknown action\n");
-                System.out.println();
-        }
+                System.out.println("\nUnknown Action.");
+            }
     }
 
     public void registerMember(Scanner scan) {
@@ -76,34 +76,30 @@ public class RegistrationView {
         try {
             store = stores.get(Integer.parseInt(scan.nextLine().trim()));
         } catch (Exception e) {
-            System.out.println("Invalid Store.\n");
+            System.out.println();
+            System.out.println("Invalid Store");
             return;
         }
 
-        try {
-            System.out.println();
-            System.out.println("Enter the member's first name:");
-            System.out.print("> ");
-            first = scan.nextLine().trim();
-            System.out.println("Enter the member's last name:");
-            System.out.print("> ");
-            last = scan.nextLine().trim();
-            System.out.println("Enter the member's membership level:");
-            System.out.print("> ");
-            level = MembershipLevel.getLevel(scan.nextLine().trim());
-            System.out.println("Enter the member's email address:");
-            System.out.print("> ");
-            email = scan.nextLine().trim();
-            System.out.println("Enter the member's home address:");
-            System.out.print("> ");
-            address = scan.nextLine().trim();
-            System.out.println("Enter the member's phone number:");
-            System.out.print("> ");
-            phone = scan.nextLine().trim();
-        } catch (Exception e) {
-            System.out.println("Invalid Entry\n");
-            return;
-        }
+        System.out.println();
+        System.out.println("Enter the member's first name:");
+        System.out.print("> ");
+        first = scan.nextLine().trim();
+        System.out.println("Enter the member's last name:");
+        System.out.print("> ");
+        last = scan.nextLine().trim();
+        System.out.println("Enter the member's membership level:");
+        System.out.print("> ");
+        level = MembershipLevel.getLevel(scan.nextLine().trim());
+        System.out.println("Enter the member's email address:");
+        System.out.print("> ");
+        email = scan.nextLine().trim();
+        System.out.println("Enter the member's home address:");
+        System.out.print("> ");
+        address = scan.nextLine().trim();
+        System.out.println("Enter the member's phone number:");
+        System.out.print("> ");
+        phone = scan.nextLine().trim();
 
         Member member = new Member();
         member.setId(id);
@@ -120,8 +116,9 @@ public class RegistrationView {
         signUp.setMemberID(member.getId());
         signUp.setSignUpDate(LocalDate.now());
         signUp.setStore(store);
+        signUpServ.save(signUp);
         System.out.println();
-        System.out.println("Success!\n");
+        System.out.println("Success!");
     }
 
     public void cancelMembership(Scanner scan) {
@@ -140,13 +137,14 @@ public class RegistrationView {
         try {
             member = members.get(Integer.parseInt(scan.nextLine().trim()));
         } catch (Exception e) {
-            System.out.println("Invalid Member\n");
+            System.out.println();
+            System.out.println("Invalid Member");
             return;
         }
         member.setActive(false);
         memberServ.save(member);
         System.out.println();
-        System.out.println("Success!\n");
+        System.out.println("Success!");
     }
 
     public void listMembers(Scanner scan) {
