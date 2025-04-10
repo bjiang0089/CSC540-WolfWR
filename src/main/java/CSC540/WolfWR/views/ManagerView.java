@@ -3,6 +3,7 @@ package CSC540.WolfWR.views;
 import CSC540.WolfWR.WolfWRApp;
 import CSC540.WolfWR.models.*;
 import CSC540.WolfWR.services.*;
+import CSC540.WolfWR.models.Staff;
 import ch.qos.logback.core.encoder.EchoEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -58,6 +59,7 @@ public class ManagerView {
             System.out.println("[6] Hire New Staff");
             System.out.println("[7] Fire Staff");
             System.out.println("[8] Create Discount");
+            System.out.println("[9] Show All Staff");
 
             System.out.print("> ");
             input = scan.nextLine().trim();
@@ -97,6 +99,9 @@ public class ManagerView {
                     break;
                 case "8":
                     createDiscount(scan);
+                    break;
+                case "9":
+                    showStaff(scan);
                     break;
                 default:
                     System.out.println("\nUnknown action\n");
@@ -280,6 +285,35 @@ public class ManagerView {
             return null;
         }
 
+    }
+
+    public void showStaff(Scanner scan) {
+        List<Store> stores = storeService.getAllStores();
+        System.out.println();
+        System.out.println("Select your store:");
+        int idx = 0;
+        for (Store store : stores) {
+            System.out.printf("[%d] Store ID: %d\n", idx, store.getStoreID());
+            idx++;
+        }
+        System.out.print("> ");
+        Store store = null;
+        try {
+            store = stores.get(Integer.parseInt(scan.nextLine().trim()));
+        } catch (Exception e) {
+            System.out.println("Invalid Store");
+            return;
+        }
+        idx = 0;
+        List<Staff> staff = staffService.findAllByStore(store);
+        System.out.println();
+        for (Staff staffMember : staff) {
+            System.out.printf("[%d] Staff ID: %d, Role: %s, Store ID: %d\n", idx, staffMember.getStaffId(), staffMember.getTitle().name(), staffMember.getStore().getStoreID());
+            idx++;
+        }
+        System.out.println();
+        System.out.println("Success!");
+        System.out.println();
     }
 
     public Member selectMember(Scanner scan) {

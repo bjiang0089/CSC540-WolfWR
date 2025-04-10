@@ -12,4 +12,7 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
 
     @Query(value =  "SELECT storeID FROM store", nativeQuery = true)
     public List<Long> getIDs();
+
+    @Query(value = "SELECT * from store", nativeQuery = true)
+    public List<Store> getAllStores();
 }

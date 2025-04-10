@@ -19,4 +19,5 @@ public interface StaffRepository extends JpaRepository<Staff, Long> {
 
     @Query(value = "SELECT * FROM staff WHERE storeid = :storeID", nativeQuery = true)
     public List<Staff> findByStore(@Param("storeID") long storeID);
+
 }

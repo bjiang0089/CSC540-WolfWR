@@ -28,5 +28,10 @@ public class StoreService  extends  Services<Store, Long> {
         return Collections.max(ids) + 1;
     }
 
+    public List<Store> getAllStores() {
+        List<Store> stores = repo.getAllStores();
+        return stores;
+    }
+
 
 }
