@@ -133,6 +133,7 @@ public class RegistrationView {
             return;
         }
         member.setActive(false);
+        memberServ.save(member);
         System.out.println("Success!\n");
     }
 
